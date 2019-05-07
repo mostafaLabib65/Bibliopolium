@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class PurchaseHistory extends Model
 {
-    use SoftDeletes;
+//    use SoftDeletes;
 
     public $table = 'purchase_histories';
     

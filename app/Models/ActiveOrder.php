@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ActiveOrder extends Model
 {
-    use SoftDeletes;
+//    use SoftDeletes;
 
     public $table = 'active_orders';
     

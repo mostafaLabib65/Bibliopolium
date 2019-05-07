@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class RoleCredential extends Model
 {
-    use SoftDeletes;
+//    use SoftDeletes;
 
     public $table = 'role_credentials';
     

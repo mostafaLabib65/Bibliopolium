@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class BookEdition extends Model
 {
-    use SoftDeletes;
+//    use SoftDeletes;
 
     public $table = 'book_editions';
     
