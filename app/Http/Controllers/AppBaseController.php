@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Collection;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Response;
 
@@ -26,5 +27,25 @@ class AppBaseController extends Controller
     public function sendError($error, $code = 404)
     {
         return Response::json(ResponseUtil::makeError($error), $code);
+    }
+    /**
+     * Creates models from the raw results (it does not check the fillable attributes and so on)
+     * @param array $rawResult
+     * @return Collection
+     */
+    public static function modelsFromRawResults($rawResult = [],$cls)
+    {
+        $objects = [];
+
+        foreach($rawResult as $result)
+        {
+            $object = new $cls();
+
+            $object->setRawAttributes((array)$result, true);
+
+            $objects[] = $object;
+        }
+
+        return new Collection($objects);
     }
 }

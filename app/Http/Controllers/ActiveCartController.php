@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateActiveCartRequest;
 use App\Http\Requests\UpdateActiveCartRequest;
+use App\Models\ActiveCart;
 use App\Repositories\ActiveCartRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,8 +30,8 @@ class ActiveCartController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $activeCarts = $this->activeCartRepository->all();
-
+        $activeCarts = \DB::select("CAll index_carts");
+        $activeCarts = static::modelsFromRawResults($activeCarts,ActiveCart::class);
         return view('active_carts.index')
             ->with('activeCarts', $activeCarts);
     }

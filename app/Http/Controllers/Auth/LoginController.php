@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -18,7 +19,9 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
+    use AuthenticatesUsers{
+        login as authLogin;
+    }
 
     /**
      * Where to redirect users after login.
@@ -36,4 +39,20 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    public function login(Request $request)
+    {
+//        $value = $this->authLogin($request);
+
+        $haha = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
+        \DB::purge('mysql');
+        \Config::set('database.connections.mysql.username', $haha[0]->user_name);
+        \Config::set('database.connections.mysql.password', $haha[0]->decrypted_password);
+        $haha = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
+
+        dd($haha);
+//        return $value;
+    }
+
+
 }
