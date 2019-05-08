@@ -1,8 +1,6 @@
 CREATE schema BookStore;
 
 use BookStore;
-create schema BookStore collate utf8_general_ci;
-
 create table authors
 (
 	id int auto_increment
@@ -16,7 +14,7 @@ create table authors
 
 create table books
 (
-	id int not null
+	id int auto_increment
 		primary key,
 	title varchar(45) not null,
 	author_id int not null,
@@ -72,7 +70,7 @@ create table migrations
 	migration varchar(255) not null,
 	batch int not null
 )
-collate=utf8mb4_unicode_ci;
+	collate=utf8mb4_unicode_ci;
 
 create table password_resets
 (
@@ -80,14 +78,40 @@ create table password_resets
 	token varchar(255) not null,
 	created_at timestamp null
 )
-collate=utf8mb4_unicode_ci;
+	collate=utf8mb4_unicode_ci;
 
 create index password_resets_email_index
 	on password_resets (email);
 
+create table permissions
+(
+	id int unsigned auto_increment
+		primary key,
+	name varchar(255) not null,
+	guard_name varchar(255) not null,
+	created_at timestamp null,
+	updated_at timestamp null
+)
+	collate=utf8mb4_unicode_ci;
+
+create table model_has_permissions
+(
+	permission_id int unsigned not null,
+	model_type varchar(255) not null,
+	model_id bigint unsigned not null,
+	primary key (permission_id, model_id, model_type),
+	constraint model_has_permissions_permission_id_foreign
+		foreign key (permission_id) references permissions (id)
+			on delete cascade
+)
+	collate=utf8mb4_unicode_ci;
+
+create index model_has_permissions_model_id_model_type_index
+	on model_has_permissions (model_id, model_type);
+
 create table publishers
 (
-	id int not null
+	id int auto_increment
 		primary key,
 	name varchar(45) not null,
 	address varchar(100) not null,
@@ -148,6 +172,52 @@ create table role_credentials
 	user_name varchar(50) not null,
 	decrypted_password varchar(50) not null
 );
+
+create table roles
+(
+	id int unsigned auto_increment
+		primary key,
+	name varchar(255) not null,
+	guard_name varchar(255) not null,
+	role_credential_id tinyint null,
+	created_at timestamp null,
+	updated_at timestamp null,
+	constraint roles_role_credentials_id_fk
+		foreign key (role_credential_id) references role_credentials (id)
+)
+	collate=utf8mb4_unicode_ci;
+
+create table model_has_roles
+(
+	role_id int unsigned not null,
+	model_type varchar(255) not null,
+	model_id bigint unsigned not null,
+	primary key (role_id, model_id, model_type),
+	constraint model_has_roles_role_id_foreign
+		foreign key (role_id) references roles (id)
+			on delete cascade
+)
+	collate=utf8mb4_unicode_ci;
+
+create index model_has_roles_model_id_model_type_index
+	on model_has_roles (model_id, model_type);
+
+create table role_has_permissions
+(
+	permission_id int unsigned not null,
+	role_id int unsigned not null,
+	primary key (permission_id, role_id),
+	constraint role_has_permissions_permission_id_foreign
+		foreign key (permission_id) references permissions (id)
+			on delete cascade,
+	constraint role_has_permissions_role_id_foreign
+		foreign key (role_id) references roles (id)
+			on delete cascade
+)
+	collate=utf8mb4_unicode_ci;
+
+create index roles_role_credential_id_index
+	on roles (role_credential_id);
 
 create table schema_migrations
 (
@@ -267,25 +337,4 @@ create index purchase_items_histories_book_id_edition_id_index
 
 create index purchase_items_histories_purchase_history_id_index
 	on purchase_items_histories (purchase_history_id);
-
-create definer = root@localhost procedure Login(IN email_x varchar(100), IN passwd_x varchar(100))
-BEGIN
-  DECLARE EXIT HANDLER FOR NOT FOUND
-    BEGIN
-
-    end;
-
-  SELECT role_credentials.user_name, role_credentials.decrypted_password
-  from users
-         inner join role_credentials on users.role = role_credentials.id
-  where email = email_x;
-
-end;
-
-create definer = root@localhost procedure index_carts()
-BEGIN
-  SELECT * from active_carts;
-
-end;
-
 
