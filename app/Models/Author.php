@@ -39,7 +39,7 @@ class Author extends Model
      * @var array
      */
     protected $casts = [
-        'auther_id' => 'integer',
+        'id' => 'integer',
         'name' => 'string'
     ];
 
@@ -49,7 +49,7 @@ class Author extends Model
      * @var array
      */
     public static $rules = [
-        'auther_id' => 'required',
+        'id' => 'required',
         'name' => 'required'
     ];
 

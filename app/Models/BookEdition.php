@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property \App\Models\Book book
  * @property \App\Models\Publisher publisher
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property \Illuminate\Database\Eloquent\Collection items
  * @property integer edition
  * @property string publishing_year
@@ -24,15 +24,17 @@ class BookEdition extends Model
 //    use SoftDeletes;
 
     public $table = 'book_editions';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
 
     protected $dates = ['deleted_at'];
 
+    public $timestamps = false;
 
     public $fillable = [
+        'book_id',
         'edition',
         'publishing_year',
         'publisher_id',
@@ -64,6 +66,8 @@ class BookEdition extends Model
         'publisher_id' => 'required',
         'no_of_copies' => 'required'
     ];
+
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

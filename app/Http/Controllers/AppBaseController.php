@@ -28,17 +28,17 @@ class AppBaseController extends Controller
     {
         return Response::json(ResponseUtil::makeError($error), $code);
     }
+
     /**
      * Creates models from the raw results (it does not check the fillable attributes and so on)
      * @param array $rawResult
      * @return Collection
      */
-    public static function modelsFromRawResults($rawResult = [],$cls)
+    public static function modelsFromRawResults($rawResult = [], $cls)
     {
         $objects = [];
 
-        foreach($rawResult as $result)
-        {
+        foreach ($rawResult as $result) {
             $object = new $cls();
 
             $object->setRawAttributes((array)$result, true);
@@ -47,5 +47,16 @@ class AppBaseController extends Controller
         }
 
         return new Collection($objects);
+    }
+
+    public static function modelFromRawResult($rawResult, $cls)
+    {
+
+        $object = new $cls();
+
+        $object->setRawAttributes((array)$rawResult, true);
+
+
+        return $object;
     }
 }

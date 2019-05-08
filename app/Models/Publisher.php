@@ -42,7 +42,7 @@ class Publisher extends Model
      * @var array
      */
     protected $casts = [
-        'publisher_id' => 'integer',
+        'id' => 'integer',
         'name' => 'string',
         'address' => 'string',
         'phone_number' => 'string'
@@ -54,7 +54,7 @@ class Publisher extends Model
      * @var array
      */
     public static $rules = [
-        'publisher_id' => 'required',
+        'id' => 'required',
         'name' => 'required',
         'address' => 'required',
         'phone_number' => 'required'

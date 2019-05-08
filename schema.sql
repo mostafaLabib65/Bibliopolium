@@ -2,6 +2,8 @@ CREATE schema BookStore;
 
 use BookStore;
 
+create schema BookStore collate utf8_general_ci;
+
 create table authors
 (
 	auther_id int auto_increment
@@ -11,7 +13,7 @@ create table authors
 
 create table books
 (
-	book_id int not null
+	id int not null
 		primary key,
 	title varchar(45) not null,
 	author_id int not null,
@@ -25,13 +27,13 @@ create table books
 
 create table active_orders
 (
-	order_id int not null
+	id int not null
 		primary key,
 	book_id int not null,
 	quantity int not null,
 	order_timestamp date not null,
 	constraint fk_active_orders_books
-		foreign key (book_id) references books (book_id)
+		foreign key (book_id) references books (id)
 );
 
 create index fk_ACTIVE_ORDER_BOOK_idx
@@ -42,7 +44,7 @@ create index fk_BOOK_AUTHOR_idx
 
 create table history_orders
 (
-	order_id int not null
+	id int not null
 		primary key,
 	book_id int not null,
 	quantity int not null,
@@ -50,7 +52,7 @@ create table history_orders
 	status int not null,
 	history_timestamp date not null,
 	constraint fk_history_orders_books
-		foreign key (book_id) references books (book_id)
+		foreign key (book_id) references books (id)
 );
 
 create index fk_ACTIVE_ORDER_BOOK_idx
@@ -63,7 +65,7 @@ create table migrations
 	migration varchar(255) not null,
 	batch int not null
 )
-collate=utf8mb4_unicode_ci;
+	collate=utf8mb4_unicode_ci;
 
 create table password_resets
 (
@@ -71,14 +73,14 @@ create table password_resets
 	token varchar(255) not null,
 	created_at timestamp null
 )
-collate=utf8mb4_unicode_ci;
+	collate=utf8mb4_unicode_ci;
 
 create index password_resets_email_index
 	on password_resets (email);
 
 create table publishers
 (
-	publisher_id int not null
+	id int not null
 		primary key,
 	name varchar(45) not null,
 	address varchar(100) not null,
@@ -98,9 +100,9 @@ create table book_editions
 	no_of_copies int not null,
 	primary key (book_id, edition),
 	constraint fk_book_editions_books
-		foreign key (book_id) references books (book_id),
+		foreign key (book_id) references books (id),
 	constraint fk_book_editions_publishers
-		foreign key (publisher_id) references publishers (publisher_id)
+		foreign key (publisher_id) references publishers (id)
 );
 
 create index fk_BOOK_EDITION_PUBLISHER_idx
@@ -113,9 +115,9 @@ create table book_isbns
 	isbn int not null,
 	primary key (book_id, publisher_id),
 	constraint fk_book_isbns_books
-		foreign key (book_id) references books (book_id),
+		foreign key (book_id) references books (id),
 	constraint fk_book_isbns_publishers
-		foreign key (publisher_id) references publishers (publisher_id)
+		foreign key (publisher_id) references publishers (id)
 );
 
 create index fk_BOOK_ISBN_PUBLISHER_idx
@@ -123,7 +125,7 @@ create index fk_BOOK_ISBN_PUBLISHER_idx
 
 create table role_credentials
 (
-	role_id tinyint not null
+	id tinyint not null
 		primary key,
 	role_name varchar(50) null,
 	user_name varchar(50) not null,
@@ -142,7 +144,7 @@ create table statistics
 		primary key,
 	sold_copies int not null,
 	constraint fk_statistics_books
-		foreign key (book_id) references books (book_id)
+		foreign key (book_id) references books (id)
 );
 
 create table users
@@ -170,13 +172,13 @@ create table users
 	constraint index_users_on_reset_password_token
 		unique (reset_password_token),
 	constraint users_role_credentials_role_id_fk
-		foreign key (role) references role_credentials (role_id)
+		foreign key (role) references role_credentials (id)
 );
 
 create table active_carts
 (
 	user_name varchar(100) not null,
-	cart_id int auto_increment
+	id int auto_increment
 		primary key,
 	timestamp date not null,
 	status int not null,
@@ -198,7 +200,7 @@ create table items
 	constraint Book_id_UNIQUE
 		unique (book_id, cart_id, edition),
 	constraint items_active_carts_cart_id_fk
-		foreign key (cart_id) references active_carts (cart_id)
+		foreign key (cart_id) references active_carts (id)
 			on update cascade on delete cascade,
 	constraint items_book_editions_book_id_edition_fk
 		foreign key (book_id, edition) references book_editions (book_id, edition)
@@ -214,4 +216,24 @@ create table purchase_histories
 	constraint fk_PURCHASE_HISTORY_USER
 		foreign key (user_name) references users (user_name)
 );
+
+create definer = root@localhost procedure Login(IN email_x varchar(100), IN passwd_x varchar(100))
+BEGIN
+	DECLARE EXIT HANDLER FOR NOT FOUND
+		BEGIN
+
+		end;
+
+	SELECT role_credentials.user_name, role_credentials.decrypted_password
+	from users
+				 inner join role_credentials on users.role = role_credentials.role_id
+	where email = email_x;
+
+end;
+
+create definer = root@localhost procedure index_carts()
+BEGIN
+	SELECT * from active_carts;
+
+end;
 

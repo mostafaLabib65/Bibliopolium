@@ -30,7 +30,13 @@ Route::resource('activeOrders', 'ActiveOrderController');
 
 Route::resource('authors', 'AuthorController');
 
-Route::resource('bookEditions', 'BookEditionController');
+Route::resource('bookEditions', 'BookEditionController',[
+    'only' => ['index','create']
+]);
+
+Route::resource('bookEditions/{book_id}/bookEditions', 'BookEditionController',[
+    'except' => ['index','create']
+]);
 
 Route::resource('bookIsbns', 'BookIsbnController');
 

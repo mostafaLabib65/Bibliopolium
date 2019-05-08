@@ -16,10 +16,10 @@
             <td>{!! $bookEdition->publisher_id !!}</td>
             <td>{!! $bookEdition->no_of_copies !!}</td>
             <td>
-                {!! Form::open(['route' => ['bookEditions.destroy', $bookEdition->id], 'method' => 'delete']) !!}
+                {!! Form::open(['route' => ['bookEditions.destroy', $bookEdition->book_id,$bookEdition->edition], 'method' => 'delete']) !!}
                 <div class='btn-group'>
-                    <a href="{!! route('bookEditions.show', [$bookEdition->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
-                    <a href="{!! route('bookEditions.edit', [$bookEdition->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
+                    <a href="{!! route('bookEditions.show', [$bookEdition->book_id,$bookEdition->edition]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
+                    <a href="{!! route('bookEditions.edit', [$bookEdition->book_id,$bookEdition->edition]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
                     {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
                 </div>
                 {!! Form::close() !!}

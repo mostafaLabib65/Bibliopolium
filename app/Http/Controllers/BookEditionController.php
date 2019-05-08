@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookEditionRequest;
 use App\Http\Requests\UpdateBookEditionRequest;
+use App\Models\BookEdition;
 use App\Repositories\BookEditionRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -70,9 +71,11 @@ class BookEditionController extends AppBaseController
      *
      * @return Response
      */
-    public function show($id)
+    public function show($book, $edition)
     {
-        $bookEdition = $this->bookEditionRepository->find($id);
+        $bookEdition = \DB::select("Select * from book_editions where book_id = {$book} and edition = {$edition} limit 1")[0];
+
+        $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
 
         if (empty($bookEdition)) {
             Flash::error('Book Edition not found');

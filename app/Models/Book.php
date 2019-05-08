@@ -52,7 +52,7 @@ class Book extends Model
      * @var array
      */
     protected $casts = [
-        'book_id' => 'integer',
+        'id' => 'integer',
         'title' => 'string',
         'author_id' => 'integer',
         'price' => 'float',
@@ -67,7 +67,7 @@ class Book extends Model
      * @var array
      */
     public static $rules = [
-        'book_id' => 'required',
+        'id' => 'required',
         'title' => 'required',
         'author_id' => 'required',
         'price' => 'required',

@@ -59,7 +59,7 @@ class ActiveCart extends Model
      */
     public static $rules = [
         'user_name' => 'required',
-        'cart_id' => 'required',
+        'id' => 'required',
         'timestamp' => 'required',
         'status' => 'required',
         'no_of_items' => 'required'

@@ -4,6 +4,12 @@
     {!! Form::number('edition', null, ['class' => 'form-control']) !!}
 </div>
 
+<!-- Edition Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('book_id', 'Book ID:') !!}
+    {!! Form::number('book_id', null, ['class' => 'form-control']) !!}
+</div>
+
 <!-- Publishing Year Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('publishing_year', 'Publishing Year:') !!}
@@ -13,8 +19,8 @@
 @section('scripts')
     <script type="text/javascript">
         $('#publishing_year').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
-            useCurrent: false
+            format: 'YYYY-MM-DD',
+            useCurrent: true
         })
     </script>
 @endsection

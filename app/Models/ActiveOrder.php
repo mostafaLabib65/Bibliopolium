@@ -43,7 +43,7 @@ class ActiveOrder extends Model
      * @var array
      */
     protected $casts = [
-        'order_id' => 'integer',
+        'id' => 'integer',
         'book_id' => 'integer',
         'quantity' => 'integer',
         'order_timestamp' => 'date'
@@ -55,7 +55,7 @@ class ActiveOrder extends Model
      * @var array
      */
     public static $rules = [
-        'order_id' => 'required',
+        'id' => 'required',
         'book_id' => 'required',
         'quantity' => 'required',
         'order_timestamp' => 'required'

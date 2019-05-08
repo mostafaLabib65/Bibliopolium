@@ -43,7 +43,7 @@ class RoleCredential extends Model
      * @var array
      */
     protected $casts = [
-        'role_id' => 'boolean',
+        'id' => 'boolean',
         'role_name' => 'string',
         'user_name' => 'string',
         'decrypted_password' => 'string'
@@ -55,7 +55,7 @@ class RoleCredential extends Model
      * @var array
      */
     public static $rules = [
-        'role_id' => 'required',
+        'id' => 'required',
         'user_name' => 'required',
         'decrypted_password' => 'required'
     ];
