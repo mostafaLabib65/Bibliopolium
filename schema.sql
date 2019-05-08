@@ -1,14 +1,17 @@
 CREATE schema BookStore;
 
 use BookStore;
-
 create schema BookStore collate utf8_general_ci;
 
 create table authors
 (
-	auther_id int auto_increment
+	id int auto_increment
 		primary key,
-	name varchar(45) not null
+	name varchar(45) not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
+	constraint authors_name_uindex
+		unique (name)
 );
 
 create table books
@@ -19,19 +22,22 @@ create table books
 	author_id int not null,
 	price float not null,
 	category varchar(20) not null,
-	threshold int not null,
-	no_of_copies int not null,
+	threshold int default 5 not null,
+	no_of_copies int default 0 not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
 	constraint fk_books_authors
-		foreign key (author_id) references authors (auther_id)
+		foreign key (author_id) references authors (id)
 );
 
 create table active_orders
 (
-	id int not null
+	id int auto_increment
 		primary key,
 	book_id int not null,
 	quantity int not null,
-	order_timestamp date not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
 	constraint fk_active_orders_books
 		foreign key (book_id) references books (id)
 );
@@ -48,9 +54,10 @@ create table history_orders
 		primary key,
 	book_id int not null,
 	quantity int not null,
-	order_timestamp date not null,
-	status int not null,
-	history_timestamp date not null,
+	order_created_at timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+	status varchar(20) default 'confirmed' not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
 	constraint fk_history_orders_books
 		foreign key (book_id) references books (id)
 );
@@ -65,7 +72,7 @@ create table migrations
 	migration varchar(255) not null,
 	batch int not null
 )
-	collate=utf8mb4_unicode_ci;
+collate=utf8mb4_unicode_ci;
 
 create table password_resets
 (
@@ -73,7 +80,7 @@ create table password_resets
 	token varchar(255) not null,
 	created_at timestamp null
 )
-	collate=utf8mb4_unicode_ci;
+collate=utf8mb4_unicode_ci;
 
 create index password_resets_email_index
 	on password_resets (email);
@@ -85,19 +92,25 @@ create table publishers
 	name varchar(45) not null,
 	address varchar(100) not null,
 	phone_number varchar(20) not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
 	constraint Address_UNIQUE
 		unique (address),
 	constraint Phone_number_UNIQUE
-		unique (phone_number)
+		unique (phone_number),
+	constraint publishers_name_uindex
+		unique (name)
 );
 
 create table book_editions
 (
 	book_id int not null,
 	edition int not null,
-	publishing_year date not null,
 	publisher_id int not null,
-	no_of_copies int not null,
+	publishing_year int(4) null,
+	no_of_copies int default 0 not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
 	primary key (book_id, edition),
 	constraint fk_book_editions_books
 		foreign key (book_id) references books (id),
@@ -112,8 +125,12 @@ create table book_isbns
 (
 	book_id int not null,
 	publisher_id int not null,
-	isbn int not null,
+	isbn varchar(20) not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
 	primary key (book_id, publisher_id),
+	constraint book_isbns_isbn_uindex
+		unique (isbn),
 	constraint fk_book_isbns_books
 		foreign key (book_id) references books (id),
 	constraint fk_book_isbns_publishers
@@ -143,15 +160,17 @@ create table statistics
 	book_id int not null
 		primary key,
 	sold_copies int not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
 	constraint fk_statistics_books
 		foreign key (book_id) references books (id)
 );
 
 create table users
 (
-	id bigint null,
-	user_name varchar(100) default 'john doe' not null
+	id bigint auto_increment
 		primary key,
+	user_name varchar(100) default 'john doe' not null,
 	email varchar(100) not null,
 	first_name varchar(100) null,
 	last_name varchar(100) null,
@@ -171,31 +190,34 @@ create table users
 		unique (email),
 	constraint index_users_on_reset_password_token
 		unique (reset_password_token),
-	constraint users_role_credentials_role_id_fk
+	constraint users_role_credentials_id_fk
 		foreign key (role) references role_credentials (id)
 );
 
 create table active_carts
 (
-	user_name varchar(100) not null,
 	id int auto_increment
 		primary key,
-	timestamp date not null,
-	status int not null,
+	user_id bigint not null,
 	no_of_items int not null,
-	constraint fk_active_carts_users
-		foreign key (user_name) references users (user_name)
+	status varchar(20) default 'active' not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
+	constraint active_carts_users_id_fk
+		foreign key (user_id) references users (id)
 );
 
 create index fk_ACTIVE_CARTS_USER_idx
-	on active_carts (user_name);
+	on active_carts (user_id);
 
 create table items
 (
 	cart_id int not null,
 	book_id int not null,
-	quantity int not null,
 	edition int not null,
+	quantity int not null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
 	primary key (cart_id, book_id, edition),
 	constraint Book_id_UNIQUE
 		unique (book_id, cart_id, edition),
@@ -209,31 +231,61 @@ create table items
 
 create table purchase_histories
 (
-	user_name varchar(100) not null
+	id int auto_increment
 		primary key,
-	timestamp date not null,
+	user_id bigint not null,
+	no_of_items int not null,
 	total_price float not null,
-	constraint fk_PURCHASE_HISTORY_USER
-		foreign key (user_name) references users (user_name)
+	status varchar(20) default 'discarded' not null,
+	cart_created_at timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+	cart_updated_at timestamp null,
+	created_at timestamp default CURRENT_TIMESTAMP not null,
+	updated_at timestamp null,
+	constraint purchase_histories_users_id_fk
+		foreign key (user_id) references users (id)
 );
+
+create table purchase_items_histories
+(
+	purchase_history_id int not null,
+	book_id int not null,
+	edition_id int not null,
+	quantity int not null,
+	purchase_item_created_at timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
+	purchase_item_updated_at timestamp null,
+	created_at timestamp default CURRENT_TIMESTAMP null,
+	updated_at timestamp null,
+	primary key (book_id, purchase_history_id, edition_id),
+	constraint purchase_items_histories_book_editions_book_id_edition_fk
+		foreign key (book_id, edition_id) references book_editions (book_id, edition),
+	constraint purchase_items_histories_purchase_histories_id_fk
+		foreign key (purchase_history_id) references purchase_histories (id)
+);
+
+create index purchase_items_histories_book_id_edition_id_index
+	on purchase_items_histories (book_id, edition_id);
+
+create index purchase_items_histories_purchase_history_id_index
+	on purchase_items_histories (purchase_history_id);
 
 create definer = root@localhost procedure Login(IN email_x varchar(100), IN passwd_x varchar(100))
 BEGIN
-	DECLARE EXIT HANDLER FOR NOT FOUND
-		BEGIN
+  DECLARE EXIT HANDLER FOR NOT FOUND
+    BEGIN
 
-		end;
+    end;
 
-	SELECT role_credentials.user_name, role_credentials.decrypted_password
-	from users
-				 inner join role_credentials on users.role = role_credentials.role_id
-	where email = email_x;
+  SELECT role_credentials.user_name, role_credentials.decrypted_password
+  from users
+         inner join role_credentials on users.role = role_credentials.id
+  where email = email_x;
 
 end;
 
 create definer = root@localhost procedure index_carts()
 BEGIN
-	SELECT * from active_carts;
+  SELECT * from active_carts;
 
 end;
+
 

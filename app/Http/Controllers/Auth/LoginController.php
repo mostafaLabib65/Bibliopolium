@@ -42,7 +42,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-//        $value = $this->authLogin($request);
+        $value = $this->authLogin($request);
 
         $haha = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
         \DB::purge('mysql');
@@ -50,8 +50,7 @@ class LoginController extends Controller
         \Config::set('database.connections.mysql.password', $haha[0]->decrypted_password);
         $haha = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
 
-        dd($haha);
-//        return $value;
+        return $value;
     }
 
 
