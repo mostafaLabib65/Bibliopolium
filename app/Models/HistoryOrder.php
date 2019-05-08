@@ -50,9 +50,8 @@ class HistoryOrder extends Model
         'id' => 'integer',
         'book_id' => 'integer',
         'quantity' => 'integer',
-        'order_timestamp' => 'date',
-        'status' => 'integer',
-        'history_timestamp' => 'date'
+        'order_created_at' => 'date',
+        'status' => 'string',
     ];
 
     /**
@@ -64,9 +63,8 @@ class HistoryOrder extends Model
         'id' => 'required',
         'book_id' => 'required',
         'quantity' => 'required',
-        'order_timestamp' => 'required',
+        'order_created_at' => 'required',
         'status' => 'required',
-        'history_timestamp' => 'required'
     ];
 
     /**

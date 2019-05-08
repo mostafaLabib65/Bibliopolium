@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * Class User
  * @package App\Models
  * @version May 7, 2019, 9:00 pm UTC
  *
- * @property \App\Models\RoleCredential role
  * @property \Illuminate\Database\Eloquent\Collection activeCarts
  * @property \Illuminate\Database\Eloquent\Collection 
  * @property \Illuminate\Database\Eloquent\Collection 
@@ -29,11 +29,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string reset_password_token
  * @property string|\Carbon\Carbon reset_password_sent_at
  * @property string|\Carbon\Carbon remember_created_at
- * @property boolean role
+ * @property integer role
  */
 class User extends Authenticatable
 {
 //    use SoftDeletes;
+    use HasRoles;
 
     public $table = 'users';
     
@@ -104,13 +105,13 @@ class User extends Authenticatable
         'role' => 'required'
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     **/
-    public function role()
-    {
-        return $this->belongsTo(\App\Models\RoleCredential::class, 'role');
-    }
+//    /**
+//     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+//     **/
+//    public function role()
+//    {
+//        return $this->belongsTo(\App\Models\RoleCredential::class, 'role');
+//    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

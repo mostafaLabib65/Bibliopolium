@@ -49,7 +49,7 @@ class BookEdition extends Model
     protected $casts = [
         'book_id' => 'integer',
         'edition' => 'integer',
-        'publishing_year' => 'date',
+        'publishing_year' => 'integer',
         'publisher_id' => 'integer',
         'no_of_copies' => 'integer'
     ];

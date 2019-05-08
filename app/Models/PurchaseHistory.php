@@ -31,7 +31,11 @@ class PurchaseHistory extends Model
 
 
     public $fillable = [
-        'timestamp',
+        'user_id',
+        'no_of_items',
+        'status',
+        'cart_created_at',
+        'cart_updated_at',
         'total_price'
     ];
 
@@ -41,9 +45,13 @@ class PurchaseHistory extends Model
      * @var array
      */
     protected $casts = [
-        'user_name' => 'string',
-        'timestamp' => 'date',
-        'total_price' => 'float'
+        'id' => 'integer',
+        'user_id' => 'integer',
+        'no_of_items' => 'integer',
+        'total_price' => 'float',
+        'status' => 'string',
+        'cart_created_at' => 'date',
+        'cart_updated_at' => 'date',
     ];
 
     /**
@@ -52,16 +60,19 @@ class PurchaseHistory extends Model
      * @var array
      */
     public static $rules = [
-        'user_name' => 'required',
-        'timestamp' => 'required',
-        'total_price' => 'required'
+        'id' => 'required',
+        'user_id' => 'required',
+        'total_price' => 'required',
+        'no_of_items' => 'required',
+        'status' => 'required',
+        'cart_created_at' => 'required',
     ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function userName()
+    public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_name');
+        return $this->belongsTo(\App\User::class, 'user_id');
     }
 }

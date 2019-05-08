@@ -43,7 +43,7 @@ class BookIsbn extends Model
     protected $casts = [
         'book_id' => 'integer',
         'publisher_id' => 'integer',
-        'isbn' => 'integer'
+        'isbn' => 'string'
     ];
 
     /**

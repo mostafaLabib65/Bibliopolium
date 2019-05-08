@@ -32,6 +32,7 @@ class Item extends Model
 
 
     public $fillable = [
+        'cart_id',
         'book_id',
         'quantity',
         'edition'

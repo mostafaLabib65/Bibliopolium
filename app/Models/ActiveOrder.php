@@ -34,7 +34,6 @@ class ActiveOrder extends Model
     public $fillable = [
         'book_id',
         'quantity',
-        'order_timestamp'
     ];
 
     /**
@@ -46,7 +45,6 @@ class ActiveOrder extends Model
         'id' => 'integer',
         'book_id' => 'integer',
         'quantity' => 'integer',
-        'order_timestamp' => 'date'
     ];
 
     /**
@@ -58,7 +56,6 @@ class ActiveOrder extends Model
         'id' => 'required',
         'book_id' => 'required',
         'quantity' => 'required',
-        'order_timestamp' => 'required'
     ];
 
     /**

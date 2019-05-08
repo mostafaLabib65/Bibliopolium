@@ -33,8 +33,7 @@ class ActiveCart extends Model
 
 
     public $fillable = [
-        'user_name',
-        'timestamp',
+        'user_id',
         'status',
         'no_of_items'
     ];
@@ -45,10 +44,10 @@ class ActiveCart extends Model
      * @var array
      */
     protected $casts = [
+        'id' => 'integer',
         'user_name' => 'string',
         'cart_id' => 'integer',
-        'timestamp' => 'date',
-        'status' => 'integer',
+        'status' => 'string',
         'no_of_items' => 'integer'
     ];
 
@@ -60,7 +59,6 @@ class ActiveCart extends Model
     public static $rules = [
         'user_name' => 'required',
         'id' => 'required',
-        'timestamp' => 'required',
         'status' => 'required',
         'no_of_items' => 'required'
     ];
@@ -68,16 +66,16 @@ class ActiveCart extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function userName()
+    public function user()
     {
-        return $this->belongsTo(\App\Models\User::class, 'user_name');
+        return $this->belongsTo(\App\User::class, 'user_id');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
     public function item()
     {
-        return $this->hasOne(\App\Models\Item::class);
+        return $this->hasMany(\App\Models\Item::class);
     }
 }

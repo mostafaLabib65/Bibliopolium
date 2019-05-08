@@ -93,11 +93,11 @@ class Book extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
     public function bookEdition()
     {
-        return $this->hasOne(\App\Models\BookEdition::class);
+        return $this->hasMany(\App\Models\BookEdition::class);
     }
 
     /**
