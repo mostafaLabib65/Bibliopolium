@@ -18,36 +18,39 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::group(["middleware" => "auth"], function () {
 
-Route::resource('books', 'BookController');
+    Route::get('/home', 'HomeController@index');
 
-Route::resource('users', 'UserController');
+    Route::resource('books', 'BookController');
 
-Route::resource('activeCarts', 'ActiveCartController');
+    Route::resource('users', 'UserController');
 
-Route::resource('activeOrders', 'ActiveOrderController');
+    Route::resource('activeCarts', 'ActiveCartController');
 
-Route::resource('authors', 'AuthorController');
+    Route::resource('activeOrders', 'ActiveOrderController');
 
-Route::resource('bookEditions', 'BookEditionController',[
-    'only' => ['index','create']
-]);
+    Route::resource('authors', 'AuthorController');
 
-Route::resource('bookEditions/{book_id}/bookEditions', 'BookEditionController',[
-    'except' => ['index','create']
-]);
+    Route::resource('bookEditions', 'BookEditionController', [
+        'only' => ['index', 'create']
+    ]);
 
-Route::resource('bookIsbns', 'BookIsbnController');
+    Route::resource('bookEditions/{book_id}/bookEditions', 'BookEditionController', [
+        'except' => ['index', 'create']
+    ]);
 
-Route::resource('historyOrders', 'HistoryOrderController');
+    Route::resource('bookIsbns', 'BookIsbnController');
 
-Route::resource('items', 'ItemController');
+    Route::resource('historyOrders', 'HistoryOrderController');
 
-Route::resource('publishers', 'PublisherController');
+    Route::resource('items', 'ItemController');
 
-Route::resource('purchaseHistories', 'PurchaseHistoryController');
+    Route::resource('publishers', 'PublisherController');
 
-Route::resource('roleCredentials', 'RoleCredentialController');
+    Route::resource('purchaseHistories', 'PurchaseHistoryController');
 
-Route::resource('statistics', 'StatisticController');
+    Route::resource('roleCredentials', 'RoleCredentialController');
+
+    Route::resource('statistics', 'StatisticController');
+});
