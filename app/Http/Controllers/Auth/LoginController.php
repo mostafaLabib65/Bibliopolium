@@ -40,17 +40,14 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function login(Request $request)
+
+
+    protected function authenticated(Request $request, $user)
     {
-        $value = $this->authLogin($request);
-
-        $haha = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
+        $credentials = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
         \DB::purge('mysql');
-        \Config::set('database.connections.mysql.username', $haha[0]->user_name);
-        \Config::set('database.connections.mysql.password', $haha[0]->decrypted_password);
-        $haha = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
-
-        return $value;
+        \Config::set('database.connections.mysql.username', $credentials[0]->user_name);
+        \Config::set('database.connections.mysql.password', $credentials[0]->decrypted_password);
     }
 
 
