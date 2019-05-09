@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateActiveOrderRequest;
 use App\Http\Requests\UpdateActiveOrderRequest;
 use App\Models\ActiveOrder;
+use App\Models\Book;
 use App\Repositories\ActiveOrderRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -44,7 +45,11 @@ class ActiveOrderController extends AppBaseController
      */
     public function create()
     {
-        return view('active_orders.create');
+        $books = \DB::select("CALL index_books()");
+        $books = static::modelsFromRawResults($books,Book::class);
+        $books = $books->pluck("title",'id');
+
+        return view('active_orders.create')->withBooks($books);
     }
 
     /**

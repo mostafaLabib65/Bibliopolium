@@ -22,6 +22,13 @@
     {!! Form::number('threshold', null, ['class' => 'form-control']) !!}
 </div>
 
+
+<!-- Threshold Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('publisher_id', 'Publisher:') !!}
+    {!! Form::select('publisher_id', $publishers, $publisher ?? null, ['class' => 'form-control']) !!}
+</div>
+
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
     {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}

@@ -6,8 +6,8 @@
 
 <!-- Author Id Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('author_id', 'Author Id:') !!}
-    {!! Form::number('author_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('author_id', 'Author:') !!}
+    {!! Form::select('author_id', $authors, $author ?? null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Price Field -->
@@ -37,7 +37,7 @@
 <!-- publisher_id Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('publisher_id', 'Publisher ID:') !!}
-    {!! Form::number('publisher_id', null, ['class' => 'form-control']) !!}
+    {!! Form::select('publisher_id', $publishers, $publisher ?? null, ['class' => 'form-control']) !!}
 </div>
 
 

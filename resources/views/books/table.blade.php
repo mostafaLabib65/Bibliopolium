@@ -13,7 +13,6 @@
     @foreach($books as $book)
         <tr>
             <td>{!! $book->title !!}</td>
-            <td>{!! $book->author_id !!}</td>
             <td>{!! $book->price !!}</td>
             <td>{!! $book->category !!}</td>
             <td>{!! $book->threshold !!}</td>

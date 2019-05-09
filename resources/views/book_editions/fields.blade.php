@@ -19,8 +19,8 @@
 
 <!-- Publisher Id Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('publisher_id', 'Publisher Id:') !!}
-    {!! Form::number('publisher_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('publisher_id', 'Publisher:') !!}
+    {!! Form::select('publisher_id', $publishers, $publisher ?? null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- No Of Copies Field -->
