@@ -12,18 +12,10 @@
 
 <!-- Publishing Year Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('publishing_year', 'Publishing Year:') !!}
-    {!! Form::date('publishing_year', null, ['class' => 'form-control','id'=>'publishing_year']) !!}
+    {!! Form::label('publishing_year', 'Publishing year:') !!}
+    {!! Form::number('publishing_year', null, ['class' => 'form-control']) !!}
 </div>
 
-@section('scripts')
-    <script type="text/javascript">
-        $('#publishing_year').datetimepicker({
-            format: 'YYYY-MM-DD',
-            useCurrent: true
-        })
-    </script>
-@endsection
 
 <!-- Publisher Id Field -->
 <div class="form-group col-sm-6">

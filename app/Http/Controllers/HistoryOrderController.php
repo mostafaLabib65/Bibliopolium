@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateHistoryOrderRequest;
 use App\Http\Requests\UpdateHistoryOrderRequest;
+use App\Models\HistoryOrder;
 use App\Repositories\HistoryOrderRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,7 +30,8 @@ class HistoryOrderController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $historyOrders = $this->historyOrderRepository->all();
+        $historyOrders = \DB::select("CALL index_history_orders");
+        $historyOrders = static::modelsFromRawResults($historyOrders,HistoryOrder::class);
 
         return view('history_orders.index')
             ->with('historyOrders', $historyOrders);

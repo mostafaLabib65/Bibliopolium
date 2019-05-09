@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePublisherRequest;
 use App\Http\Requests\UpdatePublisherRequest;
+use App\Models\Publisher;
 use App\Repositories\PublisherRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,7 +30,8 @@ class PublisherController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $publishers = $this->publisherRepository->all();
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Publisher::class);
 
         return view('publishers.index')
             ->with('publishers', $publishers);
@@ -56,7 +58,9 @@ class PublisherController extends AppBaseController
     {
         $input = $request->all();
 
-        $publisher = $this->publisherRepository->create($input);
+
+
+        $publisher = \DB::select("CALL add_new_publisher('". $input['name']." ',' " .$input['address']. " ','  " .$input['phone_number']. " ')");
 
         Flash::success('Publisher saved successfully.');
 
@@ -72,7 +76,8 @@ class PublisherController extends AppBaseController
      */
     public function show($id)
     {
-        $publisher = $this->publisherRepository->find($id);
+        $publisher = \DB::select("CALL get_publisher('". $id."')");
+        $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
 
         if (empty($publisher)) {
             Flash::error('Publisher not found');
@@ -92,7 +97,8 @@ class PublisherController extends AppBaseController
      */
     public function edit($id)
     {
-        $publisher = $this->publisherRepository->find($id);
+        $publisher = \DB::select("CALL get_publisher('". $id."')");
+        $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
 
         if (empty($publisher)) {
             Flash::error('Publisher not found');
@@ -113,7 +119,8 @@ class PublisherController extends AppBaseController
      */
     public function update($id, UpdatePublisherRequest $request)
     {
-        $publisher = $this->publisherRepository->find($id);
+        $publisher = \DB::select("CALL get_publisher('". $id."')");
+        $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
 
         if (empty($publisher)) {
             Flash::error('Publisher not found');
@@ -121,7 +128,10 @@ class PublisherController extends AppBaseController
             return redirect(route('publishers.index'));
         }
 
-        $publisher = $this->publisherRepository->update($request->all(), $id);
+        $input = $request->all();
+
+        $publisher = \DB::select("CALL update_publisher('". $publisher->id." ',' " .$input['name']. " ','  " .$input['address']. " ',' " .$input['phone_number']. " ')");
+
 
         Flash::success('Publisher updated successfully.');
 
@@ -139,7 +149,8 @@ class PublisherController extends AppBaseController
      */
     public function destroy($id)
     {
-        $publisher = $this->publisherRepository->find($id);
+        $publisher = \DB::select("CALL get_publisher('". $id."')");
+        $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
 
         if (empty($publisher)) {
             Flash::error('Publisher not found');
@@ -147,7 +158,7 @@ class PublisherController extends AppBaseController
             return redirect(route('publishers.index'));
         }
 
-        $this->publisherRepository->delete($id);
+        \DB::select("CALL delete_publisher('". $id."')");
 
         Flash::success('Publisher deleted successfully.');
 

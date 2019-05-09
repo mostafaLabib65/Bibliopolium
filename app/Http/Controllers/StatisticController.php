@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateStatisticRequest;
 use App\Http\Requests\UpdateStatisticRequest;
+use App\Models\Statistic;
 use App\Repositories\StatisticRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,10 +30,19 @@ class StatisticController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $statistics = $this->statisticRepository->all();
+        $top_books = \DB::select("CALL top_selling_books");
+        $top_books = static::modelsFromRawResults($top_books,Statistic::class);
+
+        $top_customers = \DB::select("CALL top_customers");
+        $top_customers = static::modelsFromRawResults($top_customers,Statistic::class);
+
+        $total_sales = \DB::select("CALL total_sales");
+        $total_sales = static::modelsFromRawResults($total_sales,Statistic::class);
 
         return view('statistics.index')
-            ->with('statistics', $statistics);
+            ->with('top_books', $top_books)
+            ->with('top_customers', $top_customers)
+            ->with('total_sales', $total_sales);
     }
 
     /**

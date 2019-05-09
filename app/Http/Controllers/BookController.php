@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Models\Author;
+use App\Models\Book;
 use App\Repositories\BookRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -47,7 +49,7 @@ class BookController extends AppBaseController
 //        $books = $this->bookRepository->all();
 
         return view('books.index')
-            ->with('books', $books)->with('params',$request);
+            ->with('books', $books);
     }
 
     /**
@@ -57,7 +59,10 @@ class BookController extends AppBaseController
      */
     public function create()
     {
-        return view('books.create');
+        $authors = \DB::select("select name, id from authors");
+        $authors = static::modelsFromRawResults($authors, Author::class);
+        return view('books.create')
+            ->with('authors', $authors);
     }
 
     /**
@@ -71,7 +76,7 @@ class BookController extends AppBaseController
     {
         $input = $request->all();
 
-        $book = $this->bookRepository->create($input);
+        $book = \DB::select("Call add_new_book('".$input['title']."',".$input['author_id'].",".$input['price'].",'".$input['category']."',".$input['threshold'].",".$input['no_of_copies'].",".$input['publisher_id'].",".$input['publishing_year'].",".$input['edition'].",".$input['isbn'].")");
 
         Flash::success('Book saved successfully.');
 
@@ -87,7 +92,11 @@ class BookController extends AppBaseController
      */
     public function show($id)
     {
-        $book = $this->bookRepository->find($id);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
+
+        $authors = \DB::select("CALL get_book_authors(".$id.")");
+        $authors = static::modelsFromRawResults($authors, Author::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -95,7 +104,9 @@ class BookController extends AppBaseController
             return redirect(route('books.index'));
         }
 
-        return view('books.show')->with('book', $book);
+        return view('books.show')
+            ->with('book', $book)
+            ->with('authors', $authors);
     }
 
     /**
@@ -107,7 +118,8 @@ class BookController extends AppBaseController
      */
     public function edit($id)
     {
-        $book = $this->bookRepository->find($id);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -128,15 +140,17 @@ class BookController extends AppBaseController
      */
     public function update($id, UpdateBookRequest $request)
     {
-        $book = $this->bookRepository->find($id);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
 
             return redirect(route('books.index'));
         }
+        $input = $request->all();
 
-        $book = $this->bookRepository->update($request->all(), $id);
+        $book = \DB::select("CALL update_book(".$book->id.",'".$input['title']."',".$input['price'].",'".$input['category']."',".$input['threshold'].",".$input['no_of_copies'].")");
 
         Flash::success('Book updated successfully.');
 
@@ -154,7 +168,8 @@ class BookController extends AppBaseController
      */
     public function destroy($id)
     {
-        $book = $this->bookRepository->find($id);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -162,7 +177,7 @@ class BookController extends AppBaseController
             return redirect(route('books.index'));
         }
 
-        $this->bookRepository->delete($id);
+        \DB::select("CALL delete_book('". $id."')");
 
         Flash::success('Book deleted successfully.');
 

@@ -34,6 +34,31 @@
     {!! Form::number('no_of_copies', null, ['class' => 'form-control']) !!}
 </div>
 
+<!-- publisher_id Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('publisher_id', 'Publisher ID:') !!}
+    {!! Form::number('publisher_id', null, ['class' => 'form-control']) !!}
+</div>
+
+
+<!-- Edition Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('publishing_year', 'Publishing year:') !!}
+    {!! Form::number('publishing_year', null, ['class' => 'form-control']) !!}
+</div>
+
+<!-- Edition Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('edition', 'Edition:') !!}
+    {!! Form::number('edition', null, ['class' => 'form-control']) !!}
+</div>
+
+<!-- ISBN Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('isbn', 'ISBN:') !!}
+    {!! Form::number('isbn', null, ['class' => 'form-control']) !!}
+</div>
+
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
     {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}

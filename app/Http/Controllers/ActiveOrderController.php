@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateActiveOrderRequest;
 use App\Http\Requests\UpdateActiveOrderRequest;
+use App\Models\ActiveOrder;
 use App\Repositories\ActiveOrderRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,7 +30,8 @@ class ActiveOrderController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $activeOrders = $this->activeOrderRepository->all();
+        $activeOrders = \DB::select("CALL index_active_orders");
+        $activeOrders = static::modelsFromRawResults($activeOrders,ActiveOrder::class);
 
         return view('active_orders.index')
             ->with('activeOrders', $activeOrders);
@@ -56,7 +58,7 @@ class ActiveOrderController extends AppBaseController
     {
         $input = $request->all();
 
-        $activeOrder = $this->activeOrderRepository->create($input);
+        $activeOrder = \DB::select("CALL add_new_order(".$input['book_id'].", ".$input['quantity'].")");
 
         Flash::success('Active Order saved successfully.');
 
@@ -72,7 +74,8 @@ class ActiveOrderController extends AppBaseController
      */
     public function show($id)
     {
-        $activeOrder = $this->activeOrderRepository->find($id);
+        $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
+        $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
         if (empty($activeOrder)) {
             Flash::error('Active Order not found');
@@ -92,7 +95,8 @@ class ActiveOrderController extends AppBaseController
      */
     public function edit($id)
     {
-        $activeOrder = $this->activeOrderRepository->find($id);
+        $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
+        $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
         if (empty($activeOrder)) {
             Flash::error('Active Order not found');
@@ -100,7 +104,7 @@ class ActiveOrderController extends AppBaseController
             return redirect(route('activeOrders.index'));
         }
 
-        return view('active_orders.edit')->with('activeOrder', $activeOrder);
+        return view('active_orders.confirm')->with('activeOrder', $activeOrder);
     }
 
     /**
@@ -113,15 +117,17 @@ class ActiveOrderController extends AppBaseController
      */
     public function update($id, UpdateActiveOrderRequest $request)
     {
-        $activeOrder = $this->activeOrderRepository->find($id);
+        $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
+        $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
         if (empty($activeOrder)) {
             Flash::error('Active Order not found');
 
             return redirect(route('activeOrders.index'));
         }
+        $input = $request->all();
 
-        $activeOrder = $this->activeOrderRepository->update($request->all(), $id);
+        $activeOrder = \DB::select("CALL delete_from_active_order(".$id.", '".$input['status']."')");
 
         Flash::success('Active Order updated successfully.');
 
@@ -137,20 +143,5 @@ class ActiveOrderController extends AppBaseController
      *
      * @return Response
      */
-    public function destroy($id)
-    {
-        $activeOrder = $this->activeOrderRepository->find($id);
 
-        if (empty($activeOrder)) {
-            Flash::error('Active Order not found');
-
-            return redirect(route('activeOrders.index'));
-        }
-
-        $this->activeOrderRepository->delete($id);
-
-        Flash::success('Active Order deleted successfully.');
-
-        return redirect(route('activeOrders.index'));
-    }
 }

@@ -1,13 +1,13 @@
-<!-- Book Id Field -->
+<!-- Title Field -->
 <div class="form-group">
-    {!! Form::label('book_id', 'Book Id:') !!}
-    <p>{!! $bookIsbn->book_id !!}</p>
+    {!! Form::label('title', 'Title:') !!}
+    <p>{!! $bookIsbn->title !!}</p>
 </div>
 
-<!-- Publisher Id Field -->
+<!-- Publisher Field -->
 <div class="form-group">
-    {!! Form::label('publisher_id', 'Publisher Id:') !!}
-    <p>{!! $bookIsbn->publisher_id !!}</p>
+    {!! Form::label('name', 'Publisher:') !!}
+    <p>{!! $bookIsbn->name !!}</p>
 </div>
 
 <!-- Isbn Field -->

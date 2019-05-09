@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
+use App\Models\Author;
 use App\Repositories\AuthorRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,7 +30,8 @@ class AuthorController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $authors = $this->authorRepository->all();
+        $authors = \DB::select("CALL index_authors");
+        $authors = static::modelsFromRawResults($authors,Author::class);
 
         return view('authors.index')
             ->with('authors', $authors);
@@ -56,7 +58,7 @@ class AuthorController extends AppBaseController
     {
         $input = $request->all();
 
-        $author = $this->authorRepository->create($input);
+        $author = \DB::select("CALL add_new_author('".$input['name'] ."')");
 
         Flash::success('Author saved successfully.');
 
@@ -72,7 +74,8 @@ class AuthorController extends AppBaseController
      */
     public function show($id)
     {
-        $author = $this->authorRepository->find($id);
+        $author = \DB::select("CALL get_author('". $id."')");
+        $author = static::modelFromRawResult($author[0],Author::class);
 
         if (empty($author)) {
             Flash::error('Author not found');
@@ -92,7 +95,8 @@ class AuthorController extends AppBaseController
      */
     public function edit($id)
     {
-        $author = $this->authorRepository->find($id);
+        $author = \DB::select("CALL get_author('". $id."')");
+        $author = static::modelFromRawResult($author[0],Author::class);
 
         if (empty($author)) {
             Flash::error('Author not found');
@@ -113,15 +117,17 @@ class AuthorController extends AppBaseController
      */
     public function update($id, UpdateAuthorRequest $request)
     {
-        $author = $this->authorRepository->find($id);
+        $author = \DB::select("CALL get_author('". $id."')");
+        $author = static::modelFromRawResult($author[0],Author::class);
 
         if (empty($author)) {
             Flash::error('Author not found');
 
             return redirect(route('authors.index'));
         }
+        $input = $request->all();
 
-        $author = $this->authorRepository->update($request->all(), $id);
+        $author = \DB::select("CALL update_author('".$author['id']."', '".$input['name']."')");
 
         Flash::success('Author updated successfully.');
 
@@ -139,7 +145,8 @@ class AuthorController extends AppBaseController
      */
     public function destroy($id)
     {
-        $author = $this->authorRepository->find($id);
+        $author = \DB::select("CALL get_author('". $id."')");
+        $author = static::modelFromRawResult($author[0],Author::class);
 
         if (empty($author)) {
             Flash::error('Author not found');
@@ -147,7 +154,7 @@ class AuthorController extends AppBaseController
             return redirect(route('authors.index'));
         }
 
-        $this->authorRepository->delete($id);
+        \DB::select("CALL delete_Author('". $id."')");
 
         Flash::success('Author deleted successfully.');
 

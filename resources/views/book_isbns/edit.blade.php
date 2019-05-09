@@ -11,7 +11,7 @@
        <div class="box box-primary">
            <div class="box-body">
                <div class="row">
-                   {!! Form::model($bookIsbn, ['route' => ['bookIsbns.update', $bookIsbn->id], 'method' => 'patch']) !!}
+                   {!! Form::model($bookIsbn, ['route' => ['bookIsbns.update', $bookIsbn->book_id, $bookIsbn->publisher_id], 'method' => 'patch']) !!}
 
                         @include('book_isbns.fields')
 

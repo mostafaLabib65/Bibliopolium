@@ -1,7 +1,7 @@
 <!-- Publisher Id Field -->
 <div class="form-group">
     {!! Form::label('publisher_id', 'Publisher Id:') !!}
-    <p>{!! $publisher->publisher_id !!}</p>
+    <p>{!! $publisher->id !!}</p>
 </div>
 
 <!-- Name Field -->

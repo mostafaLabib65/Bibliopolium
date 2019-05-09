@@ -1,15 +1,13 @@
 <table class="table table-responsive" id="books-table">
     <thead>
-    <tr>
-        <th>Title</th>
-        <th>Author Id</th>
+        <tr>
+            <th>Title</th>
         <th>Price</th>
         <th>Category</th>
         <th>Threshold</th>
         <th>No Of Copies</th>
-        <th colspan="3">Action</th>
-
-    </tr>
+            <th colspan="3">Action</th>
+        </tr>
     </thead>
     <tbody>
     @foreach($books as $book)
@@ -20,8 +18,6 @@
             <td>{!! $book->category !!}</td>
             <td>{!! $book->threshold !!}</td>
             <td>{!! $book->no_of_copies !!}</td>
-
-
             <td>
                 {!! Form::open(['route' => ['books.destroy', $book->id], 'method' => 'delete']) !!}
                 <div class='btn-group'>
@@ -33,7 +29,6 @@
                 </div>
                 {!! Form::close() !!}
             </td>
-
         </tr>
     @endforeach
     </tbody>

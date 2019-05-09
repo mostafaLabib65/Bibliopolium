@@ -43,7 +43,12 @@ class Book extends Model
         'price',
         'category',
         'threshold',
-        'no_of_copies'
+        'no_of_copies',
+        'publisher_id',
+        'publishing_year',
+        'edition',
+        'isbn'
+
     ];
 
     /**
@@ -58,7 +63,11 @@ class Book extends Model
         'price' => 'float',
         'category' => 'string',
         'threshold' => 'integer',
-        'no_of_copies' => 'integer'
+        'no_of_copies' => 'integer',
+        'publisher_id' => 'integer',
+        'publishing_year' => 'integer',
+        'edition' => 'integer',
+        'isbn' => 'integer'
     ];
 
     /**
@@ -67,13 +76,11 @@ class Book extends Model
      * @var array
      */
     public static $rules = [
-        'id' => 'required',
         'title' => 'required',
-        'author_id' => 'required',
         'price' => 'required',
         'category' => 'required',
         'threshold' => 'required',
-        'no_of_copies' => 'required'
+        'no_of_copies' => 'required',
     ];
 
     /**

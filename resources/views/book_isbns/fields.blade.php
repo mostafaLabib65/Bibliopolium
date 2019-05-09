@@ -10,6 +10,12 @@
     {!! Form::number('isbn', null, ['class' => 'form-control']) !!}
 </div>
 
+<!-- Book id Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('book_id', 'Book id:') !!}
+    {!! Form::number('book_id', null, ['class' => 'form-control']) !!}
+</div>
+
 <!-- Submit Field -->
 <div class="form-group col-sm-12">
     {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}

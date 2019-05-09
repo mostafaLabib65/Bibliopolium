@@ -1,9 +1,9 @@
 <table class="table table-responsive" id="bookEditions-table">
     <thead>
-    <tr>
-        <th>Edition</th>
+        <tr>
+            <th>Edition</th>
         <th>Publishing Year</th>
-        <th>Publisher Id</th>
+        <th>Publisher Name</th>
         <th>No Of Copies</th>
         <th>Add to Cart</th>
         <th colspan="3">Action</th>
@@ -12,9 +12,10 @@
     <tbody>
     @foreach($bookEditions as $bookEdition)
         <tr>
+            <td>{!! $bookEdition->title  !!}</td>
             <td>{!! $bookEdition->edition !!}</td>
             <td>{!! $bookEdition->publishing_year !!}</td>
-            <td>{!! $bookEdition->publisher_id !!}</td>
+            <td>{!! $bookEdition->name !!}</td>
             <td>{!! $bookEdition->no_of_copies !!}</td>
             <td>
                 {!! Form::open(['route' => ['items.store'], 'method' => 'post','id'=>'add_to_cart' , 'data-bookid'=>$bookEdition->book_id, 'data-edition'=>$bookEdition->edition]) !!}

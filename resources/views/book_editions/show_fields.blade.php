@@ -18,8 +18,8 @@
 
 <!-- Publisher Id Field -->
 <div class="form-group">
-    {!! Form::label('publisher_id', 'Publisher Id:') !!}
-    <p>{!! $bookEdition->publisher_id !!}</p>
+    {!! Form::label('publisher_id', 'Publisher:') !!}
+    <p>{!! $bookEdition->name !!}</p>
 </div>
 
 <!-- No Of Copies Field -->
@@ -27,4 +27,11 @@
     {!! Form::label('no_of_copies', 'No Of Copies:') !!}
     <p>{!! $bookEdition->no_of_copies !!}</p>
 </div>
+
+<!-- No Of Copies Field -->
+<div class="form-group">
+    {!! Form::label('title', 'Title:') !!}
+    <p>{!! $bookEdition->title !!}</p>
+</div>
+
 

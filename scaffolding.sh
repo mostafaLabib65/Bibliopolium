@@ -18,3 +18,4 @@ php artisan infyom:scaffold PurchaseHistory --fromTable --tableName=purchase_his
 php artisan infyom:scaffold RoleCredential --fromTable --tableName=role_credentials
 php artisan infyom:scaffold Statistic --fromTable --tableName=statistics
 php artisan infyom:scaffold User --fromTable --tableName=users
+php artisan infyom:scaffold AuthorBook --fromTable --tableName=authors_books

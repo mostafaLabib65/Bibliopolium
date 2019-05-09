@@ -10,20 +10,6 @@
     {!! Form::number('quantity', null, ['class' => 'form-control']) !!}
 </div>
 
-<!-- Order Timestamp Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('order_timestamp', 'Order Timestamp:') !!}
-    {!! Form::date('order_timestamp', null, ['class' => 'form-control','id'=>'order_timestamp']) !!}
-</div>
-
-@section('scripts')
-    <script type="text/javascript">
-        $('#order_timestamp').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
-            useCurrent: false
-        })
-    </script>
-@endsection
 
 <!-- Submit Field -->
 <div class="form-group col-sm-12">

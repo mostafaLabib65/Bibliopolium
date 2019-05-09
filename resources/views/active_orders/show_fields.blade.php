@@ -1,7 +1,7 @@
 <!-- Order Id Field -->
 <div class="form-group">
     {!! Form::label('order_id', 'Order Id:') !!}
-    <p>{!! $activeOrder->order_id !!}</p>
+    <p>{!! $activeOrder->id !!}</p>
 </div>
 
 <!-- Book Id Field -->
@@ -19,6 +19,6 @@
 <!-- Order Timestamp Field -->
 <div class="form-group">
     {!! Form::label('order_timestamp', 'Order Timestamp:') !!}
-    <p>{!! $activeOrder->order_timestamp !!}</p>
+    <p>{!! $activeOrder->created_at !!}</p>
 </div>
 

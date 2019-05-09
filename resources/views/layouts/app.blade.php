@@ -42,7 +42,7 @@
 
             <!-- Logo -->
             <a href="#" class="logo">
-                <b>InfyOm</b>
+                <b>Book store</b>
             </a>
 
             <!-- Header Navbar -->

@@ -1,7 +1,7 @@
 <!-- Book Id Field -->
 <div class="form-group">
     {!! Form::label('book_id', 'Book Id:') !!}
-    <p>{!! $book->book_id !!}</p>
+    <p>{!! $book->id !!}</p>
 </div>
 
 <!-- Title Field -->
@@ -12,8 +12,14 @@
 
 <!-- Author Id Field -->
 <div class="form-group">
-    {!! Form::label('author_id', 'Author Id:') !!}
-    <p>{!! $book->author_id !!}</p>
+    {!! Form::label('author_id', 'Authors :') !!}
+    <br>
+    @foreach($authors as $author)
+        <tr>
+            <td>{!! $author->name !!}</td>
+            <br>
+        </tr>
+    @endforeach
 </div>
 
 <!-- Price Field -->
@@ -39,4 +45,3 @@
     {!! Form::label('no_of_copies', 'No Of Copies:') !!}
     <p>{!! $book->no_of_copies !!}</p>
 </div>
-

@@ -6,23 +6,24 @@ use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class ActiveOrder
+ * Class AuthorBook
  * @package App\Models
- * @version May 7, 2019, 9:24 pm UTC
+ * @version May 9, 2019, 6:14 pm UTC
  *
+ * @property \App\Models\Author author
  * @property \App\Models\Book book
  * @property \Illuminate\Database\Eloquent\Collection 
  * @property \Illuminate\Database\Eloquent\Collection 
  * @property \Illuminate\Database\Eloquent\Collection 
- * @property integer book_id
- * @property integer quantity
- * @property string order_timestamp
+ * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection 
+ * @property integer author_id
  */
-class ActiveOrder extends Model
+class AuthorBook extends Model
 {
-//    use SoftDeletes;
+    use SoftDeletes;
 
-    public $table = 'active_orders';
+    public $table = 'authors_books';
     
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -32,8 +33,7 @@ class ActiveOrder extends Model
 
 
     public $fillable = [
-        'book_id',
-        'quantity',
+        'author_id'
     ];
 
     /**
@@ -42,9 +42,8 @@ class ActiveOrder extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
         'book_id' => 'integer',
-        'quantity' => 'integer',
+        'author_id' => 'integer'
     ];
 
     /**
@@ -53,9 +52,17 @@ class ActiveOrder extends Model
      * @var array
      */
     public static $rules = [
-//        'book_id' => 'required',
-//        'quantity' => 'required',
+        'book_id' => 'required',
+        'author_id' => 'required'
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     **/
+    public function author()
+    {
+        return $this->belongsTo(\App\Models\Author::class, 'author_id');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

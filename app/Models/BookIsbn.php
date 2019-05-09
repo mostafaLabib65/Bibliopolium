@@ -32,7 +32,8 @@ class BookIsbn extends Model
 
     public $fillable = [
         'publisher_id',
-        'isbn'
+        'isbn',
+        'book_id'
     ];
 
     /**
