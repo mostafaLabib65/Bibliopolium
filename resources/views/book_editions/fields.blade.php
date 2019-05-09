@@ -6,8 +6,8 @@
 
 <!-- Edition Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('book_id', 'Book ID:') !!}
-    {!! Form::number('book_id', null, ['class' => 'form-control']) !!}
+    {!! Form::label('book_id', 'Book:') !!}
+    {!! Form::select('book_id', $books, $book ?? null, ['class' => 'form-control']) !!}
 </div>
 
 <!-- Publishing Year Field -->

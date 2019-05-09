@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookEditionRequest;
 use App\Http\Requests\UpdateBookEditionRequest;
+use App\Models\Book;
 use App\Models\BookEdition;
 use App\Repositories\BookEditionRepository;
 use App\Http\Controllers\AppBaseController;
@@ -44,7 +45,10 @@ class BookEditionController extends AppBaseController
      */
     public function create()
     {
-        return view('book_editions.create');
+        $books = \DB::select("CALL index_books()");
+        $books = static::modelsFromRawResults($books,Book::class);
+        $books = $books->pluck("title",'id');
+        return view('book_editions.create')->withBooks($books);
     }
 
     /**

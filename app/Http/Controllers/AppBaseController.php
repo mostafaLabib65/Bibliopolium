@@ -46,7 +46,7 @@ class AppBaseController extends Controller
             $objects[] = $object;
         }
 
-        return new Collection($objects);
+        return collect($objects);
     }
 
     public static function modelFromRawResult($rawResult, $cls)
