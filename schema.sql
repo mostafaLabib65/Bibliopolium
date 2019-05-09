@@ -338,3 +338,265 @@ create index purchase_items_histories_book_id_edition_id_index
 create index purchase_items_histories_purchase_history_id_index
 	on purchase_items_histories (purchase_history_id);
 
+
+#-----------------------------------publisher table---------------------------------------------------------------------
+CREATE PROCEDURE add_new_publisher(in publisher_name varchar(45), in address varchar(100), in phone varchar(20))
+begin
+    insert into publishers (name, address, phone_number) values (publisher_name, address, phone);
+end;
+
+
+CREATE procedure index_publishers()
+begin
+    select * from publishers;
+end;
+
+
+create procedure get_publisher(in id int)
+begin
+    select * from publishers where publishers.id = id;
+end;
+
+create procedure update_publisher(in id int, in name varchar(45), in address varchar(100), in phone_number varchar(20))
+begin
+    update publishers set publishers.name = name, publishers.address = address, publishers.phone_number = phone_number  where publishers.id = id;
+end;
+
+create procedure delete_publisher(in id int)
+begin
+    delete from publishers where publishers.id = id;
+end;
+
+
+#------------------------------------------Author table-------------------------------------------------------------
+create procedure add_new_author(in author_name varchar(45))
+begin
+    insert into authors (name) values (author_name);
+end;
+
+create procedure update_author(in id int, in new_name varchar(45))
+begin
+    update authors set name = new_name where authors.id = id;
+end;
+
+create procedure get_author(in id int)
+begin
+    select * from authors where authors.id = id;
+end;
+
+create procedure delete_author(in id int)
+begin
+    delete from authors where authors.id = id;
+end;
+
+create procedure index_authors()
+begin
+    select * from authors;
+end;
+
+#-----------------------------------books table------------------------------------------------------
+CREATE procedure add_new_book( in title varchar(45), in author_id int,
+                               in price float, in category varchar(20), in threshold int, in no_of_copies int,
+                               in publisher_id int, in publishing_year int, in edition int, in isbn int)
+
+begin
+    DECLARE book_id int;
+    insert into books (title, author_id, price, category, threshold, no_of_copies, created_at) values (title, author_id, price, category, threshold, 0, NOW());
+    select max(id) from books into book_id;
+    insert into book_editions(book_id, edition, publisher_id, publishing_year, no_of_copies, created_at) values (book_id, edition, publisher_id,publishing_year , no_of_copies, NOW());
+    insert into book_isbns(book_id, publisher_id, isbn,created_at) values (book_id, publisher_id, isbn, NOW());
+end;
+
+create procedure index_books()
+begin
+    select books.id,books.title, authors.name, books.price, books.category, books.threshold, books.no_of_copies from books, authors where books.author_id = authors.id;
+end;
+
+
+create procedure get_book(in id int)
+begin
+    select * from books where books.id = id;
+end;
+
+
+create procedure update_book(in book_id int,in title varchar(45), in author_id int, in price float, in category varchar(20), in threshold int, in no_of_copies int)
+begin
+    update books set title = title, author_id = author_id, price = price, category = category, threshold = threshold, no_of_copies = no_of_copies,
+                     updated_at = NOW() where books.id = book_id;
+end;
+
+create procedure delete_book(in book int)
+begin
+    delete from books where id = book;
+end;
+
+
+
+
+create trigger request_an_order after update on books for each row
+begin
+    if NEW.no_of_copies < NEW.threshold then
+        if not exists(select book_id from active_orders where active_orders.book_id = NEW.id) then
+            insert into active_orders(book_id, quantity, created_at) values (NEW.id, 2*(select threshold from books where books.id = NEW.id), now());
+        end if;
+    end if;
+end;
+
+
+create trigger discard_order after update on books for each row
+begin
+    declare order_id int;
+    declare book_id int;
+    declare quantity int;
+    declare order_timestamp datetime;
+    select active_orders.id, active_orders.book_id, active_orders.quantity, active_orders.created_at from active_orders where active_orders.book_id = OLD.id into order_id, book_id, quantity, order_timestamp;
+    if NEW.threshold < NEW.no_of_copies then
+        if  exists(select book_id from active_orders where active_orders.book_id = OLD.id) then
+            insert into history_orders(id, book_id, quantity, order_created_at, status, created_at) values (order_id, book_id, quantity, order_timestamp,'Discard' , NOW());
+        end if;
+    end if;
+end;
+
+#---------------------------------------------book edition table-------------------------------------------------------------------------------
+create procedure add_new_edition(in book_id int, in publisher_id int, in publishing_year int, in no_of_copies int, in edition int)
+begin
+    insert into book_editions(book_id, edition, publisher_id, publishing_year, no_of_copies, created_at) values (book_id, edition, publisher_id,publishing_year, no_of_copies, now());
+end;
+
+
+create procedure index_book_editions()
+begin
+    select  book_editions.publisher_id, book_editions.book_id,books.title ,publishers.name, book_editions.edition, book_editions.publishing_year, book_editions.no_of_copies
+    from book_editions, publishers, books where book_editions.publisher_id = publishers.id and books.id = book_editions.book_id;
+end;
+
+create procedure get_book_edition(in book_id int, in edition int)
+begin
+    select  book_editions.publisher_id, book_editions.book_id,books.title ,publishers.name, book_editions.edition, book_editions.publishing_year, book_editions.no_of_copies
+    from book_editions, publishers, books where book_editions.publisher_id = publishers.id and books.id = book_id and book_editions.edition = edition;
+end;
+
+
+create procedure update_book_edition(in book_id int,in old_edition int ,in new_edition int, in publisher_id int,in publishing_year int ,in no_of_copies int)
+begin
+    update book_editions set book_editions.edition = new_edition, book_editions.publisher_id = publisher_id,
+                             book_editions.publishing_year = publishing_year, book_editions.no_of_copies = no_of_copies
+    where book_editions.edition = old_edition and book_editions.book_id = book_id;
+end;
+
+
+call update_book_edition(10,1,1,1,2015,1);
+
+create procedure delete_book_edition(in book_id int, in edition int)
+begin
+    delete from book_editions where book_editions.book_id = book_id and book_editions.edition = edition;
+end;
+
+create trigger increase_no_of_copies after insert on book_editions for each row #done
+begin
+    update books set no_of_copies = (no_of_copies + NEW.no_of_copies) where books.id = NEW.book_id;
+end;
+
+create trigger update_no_of_copies after update on book_editions for each row
+begin
+    update books set no_of_copies = (no_of_copies + NEW.no_of_copies - OLD.no_of_copies)  where books.id = NEW.book_id;
+end;
+
+
+create trigger decrease_no_of_copies after delete on book_editions for each row
+begin
+    update books set no_of_copies = (books.no_of_copies - OLD.no_of_copies)  where books.id = OLD.book_id;
+end;
+
+
+create trigger update_book_isbns_publisher_id after update on book_editions for each row
+begin
+    update book_isbns set publisher_id = NEW.publisher_id where book_isbns.book_id = OLD.book_id and book_isbns.publisher_id = OLD.publisher_id;
+end;
+#------------------------------------------------------book_isbns-----------------------------------------------------------------
+create procedure add_new_isbn(in book_id int, in publisher_id int, in isbn int)
+begin
+    insert into book_isbns(book_id, publisher_id, isbn, created_at) values (book_id, publisher_id, isbn, now());
+end;
+
+
+CREATE procedure index_book_isbns()
+begin
+    select book_isbns.book_id, books.title, book_isbns.publisher_id,publishers.name, book_isbns.isbn from books, publishers, book_isbns where books.id = book_isbns.book_id and book_isbns.publisher_id = publishers.id;
+end;
+
+create procedure get_isbn(in book_id int, in publisher_id int)
+begin
+    select book_isbns.book_id, books.title, book_isbns.publisher_id,publishers.name, book_isbns.isbn from books, publishers, book_isbns
+    where books.id = book_isbns.book_id and book_isbns.publisher_id = publishers.id and book_isbns.book_id = book_id and book_isbns.publisher_id = publisher_id;
+
+end;
+
+CREATE PROCEDURE update_isbn(in book_id int, in publisher_id int, in isbn int)
+begin
+    update book_isbns set book_isbns.isbn = isbn where book_isbns.publisher_id = publisher_id and book_isbns.book_id = book_id;
+end;
+
+create procedure delete_isbn(in book_id int, in publisher_id int)
+begin
+    delete from book_isbns where book_isbns.book_id = book_id and book_isbns.publisher_id = publisher_id;
+end;
+
+
+#---------------------------------------------------------active orders-------------------------------------------------
+create procedure index_active_orders()
+begin
+    select * from active_orders;
+end;
+
+
+create procedure add_new_order(in book_id int, in quantity int)
+begin
+    insert into active_orders(book_id, quantity, created_at) values (book_id, quantity, now());
+end;
+
+
+create procedure get_active_order(in id int)
+begin
+    select * from active_orders where active_orders.id = id;
+end;
+
+create procedure delete_from_active_order(in id int, in status varchar(20))
+begin
+    declare order_id int;
+    declare book_id int;
+    declare quantity int;
+    declare order_timestamp datetime;
+    declare max_edition int;
+    select active_orders.id, active_orders.book_id, active_orders.quantity, created_at
+    from active_orders where active_orders.id =  id into order_id, book_id, quantity, order_timestamp;
+    insert into history_orders(id, book_id, quantity, order_created_at, status, created_at) values (id, book_id, quantity, order_timestamp,status , NOW());
+    select max(edition) from book_editions where book_editions.book_id = book_id into max_edition;
+    if status = 'Successful' then
+        update book_editions set book_editions.no_of_copies = book_editions.no_of_copies + quantity where
+                book_editions.book_id = book_id and book_editions.edition = max_edition;
+    end if;
+end;
+
+#---------------------------------------------------------- history orders---------------------------------------------
+
+
+create trigger delete_acrive_order after insert on history_orders for each row
+begin
+    delete from active_orders where active_orders.id = NEW.id;
+end;
+
+#---------------------------------------------------statistics-------------------------------------------------------------------
+
+create procedure top_selling_books()
+begin
+    select book_id, title, sold_copies from statistics, books where statistics.book_id = books.id order by sold_copies desc limit 10;
+    select first_name, last_name, spent_money from users order by spent_money desc limit 5;
+
+end;
+
+
+create procedure top_customers()
+begin
+    select first_name, last_name, spent_money from users order by spent_money desc limit 5;
+end;
