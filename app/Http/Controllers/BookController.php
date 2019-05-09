@@ -49,7 +49,7 @@ class BookController extends AppBaseController
 //        $books = $this->bookRepository->all();
 
         return view('books.index')
-            ->with('books', $books);
+            ->with('books', $books)->with('params',$request);
     }
 
     /**
