@@ -46,7 +46,6 @@ class BookController extends AppBaseController
         $books = \DB::select("CALL search_books(" .$params.")");
 
         $books = static::modelsFromRawResults($books,$this->bookRepository->model());
-//        $books = $this->bookRepository->all();
 
         return view('books.index')
             ->with('books', $books)->with('params',$request);
@@ -92,6 +91,8 @@ class BookController extends AppBaseController
      */
     public function show($id)
     {
+        $this->authorize('view', Book::find($id));
+
         $book = \DB::select("CALL get_book('". $id."')");
         $book = static::modelFromRawResult($book[0],Book::class);
 

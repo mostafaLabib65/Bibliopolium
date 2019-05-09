@@ -30,6 +30,7 @@ class RoleCredential extends Model
 
     protected $dates = ['deleted_at'];
 
+    public $timestamps=false;
 
     public $fillable = [
         'role_name',
@@ -43,7 +44,7 @@ class RoleCredential extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'boolean',
+        'id' => 'integer',
         'role_name' => 'string',
         'user_name' => 'string',
         'decrypted_password' => 'string'

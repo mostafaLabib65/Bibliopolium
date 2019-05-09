@@ -39,7 +39,6 @@ class Book extends Model
 
     public $fillable = [
         'title',
-        'author_id',
         'price',
         'category',
         'threshold',
@@ -59,7 +58,6 @@ class Book extends Model
     protected $casts = [
         'id' => 'integer',
         'title' => 'string',
-        'author_id' => 'integer',
         'price' => 'float',
         'category' => 'string',
         'threshold' => 'integer',
@@ -84,11 +82,11 @@ class Book extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function author()
+    public function authors()
     {
-        return $this->belongsTo(\App\Models\Author::class, 'author_id');
+        return $this->hasMany(\App\Models\Author::class);
     }
 
     /**

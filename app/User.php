@@ -44,6 +44,7 @@ class User extends Authenticatable
 
     protected $dates = ['deleted_at'];
 
+    protected $guard_name = 'admin';
 
     /**
      * The attributes that should be hidden for arrays.
