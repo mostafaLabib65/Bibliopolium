@@ -2,7 +2,7 @@
 
 @section('content')
     <section class="content-header">
-        <h1 class="pull-left">Statistics</h1>
+        <h1 class="pull-left">Top 10 selling books</h1>
         <h1 class="pull-right">
         </h1>
     </section>
@@ -21,6 +21,11 @@
         
         </div>
     </div>
+    <section class="content-header">
+        <h1 class="pull-left">Top 5 customers</h1>
+        <h1 class="pull-right">
+        </h1>
+    </section>
     <div class="content">
         <div class="clearfix"></div>
 
@@ -36,6 +41,11 @@
 
         </div>
     </div>
+    <section class="content-header">
+        <h1 class="pull-left">Total sales for books</h1>
+        <h1 class="pull-right">
+        </h1>
+    </section>
     <div class="content">
         <div class="clearfix"></div>
 

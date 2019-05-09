@@ -579,7 +579,10 @@ begin
 end;
 
 #---------------------------------------------------------- history orders---------------------------------------------
-
+create procedure index_history_orders()
+begin
+    select * from history_orders;
+end;
 
 create trigger delete_acrive_order after insert on history_orders for each row
 begin
@@ -591,12 +594,18 @@ end;
 create procedure top_selling_books()
 begin
     select book_id, title, sold_copies from statistics, books where statistics.book_id = books.id order by sold_copies desc limit 10;
-    select first_name, last_name, spent_money from users order by spent_money desc limit 5;
-
 end;
 
 
 create procedure top_customers()
 begin
     select first_name, last_name, spent_money from users order by spent_money desc limit 5;
+end;
+
+create procedure total_sales()
+begin
+    select purchase_items_histories.book_id as id ,sum(purchase_items_histories.quantity) * books.price as total_price from purchase_items_histories, books
+    where purchase_items_histories.book_id = books.id
+      and purchase_items_histories.created_at >= DATE_SUB((select max(purchase_items_histories.created_at) from  purchase_items_histories), INTERVAL 1 MONTH)
+    group by purchase_items_histories.book_id;
 end;

@@ -7,11 +7,11 @@
         </tr>
     </thead>
     <tbody>
-    @foreach($statistics as $statistic)
+    @foreach($top_books as $top_book)
         <tr>
-            <td>{!! $statistic->book_id !!} </td>
-            <td>{!! $statistic->title !!} </td>
-            <td>{!! $statistic->sold_copies !!}</td>
+            <td>{!! $top_book->book_id !!} </td>
+            <td>{!! $top_book->title !!} </td>
+            <td>{!! $top_book->sold_copies !!}</td>
 
         </tr>
     @endforeach

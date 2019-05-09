@@ -8,11 +8,11 @@
         </tr>
     </thead>
     <tbody>
-    @foreach($statistics as $statistic)
+    @foreach($top_customers as $top_customer)
         <tr>
-            <td>{!! $statistic->first_name !!}</td>
-            <td>{!! $statistic->last_name !!}</td>
-            <td>{!! $statistic->spent_money !!}</td>
+            <td>{!! $top_customer->first_name !!}</td>
+            <td>{!! $top_customer->last_name !!}</td>
+            <td>{!! $top_customer->spent_money !!}</td>
 
         </tr>
     @endforeach
