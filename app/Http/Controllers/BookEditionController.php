@@ -48,7 +48,13 @@ class BookEditionController extends AppBaseController
         $books = \DB::select("CALL index_books()");
         $books = static::modelsFromRawResults($books,Book::class);
         $books = $books->pluck("title",'id');
-        return view('book_editions.create')->withBooks($books);
+
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
+        return view('book_editions.create')
+            ->withBooks($books)
+            ->with('publishers', $publishers);
     }
 
     /**
@@ -104,13 +110,24 @@ class BookEditionController extends AppBaseController
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
 
+        $books = \DB::select("CALL index_books()");
+        $books = static::modelsFromRawResults($books,Book::class);
+        $books = $books->pluck("title",'id');
+
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
+
         if (empty($bookEdition)) {
             Flash::error('Book Edition not found');
 
             return redirect(route('bookEditions.index'));
         }
 
-        return view('book_editions.edit')->with('bookEdition', $bookEdition);
+        return view('book_editions.edit')
+            ->with('bookEdition', $bookEdition)
+            ->with('books', $books)
+            ->with('publishers', $publishers);
     }
 
     /**

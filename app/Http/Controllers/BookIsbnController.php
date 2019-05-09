@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookIsbnRequest;
 use App\Http\Requests\UpdateBookIsbnRequest;
+use App\Models\Book;
 use App\Models\BookIsbn;
 use App\Repositories\BookIsbnRepository;
 use App\Http\Controllers\AppBaseController;
@@ -44,7 +45,16 @@ class BookIsbnController extends AppBaseController
      */
     public function create()
     {
-        return view('book_isbns.create');
+        $books = \DB::select("CALL index_books()");
+        $books = static::modelsFromRawResults($books,Book::class);
+        $books = $books->pluck("title",'id');
+
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
+        return view('book_isbns.create')
+            ->withBooks($books)
+            ->with('publishers', $publishers);;
     }
 
     /**
@@ -98,13 +108,23 @@ class BookIsbnController extends AppBaseController
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 
+        $books = \DB::select("CALL index_books()");
+        $books = static::modelsFromRawResults($books,Book::class);
+        $books = $books->pluck("title",'id');
+
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
         if (empty($bookIsbn)) {
             Flash::error('Book Isbn not found');
 
             return redirect(route('bookIsbns.index'));
         }
 
-        return view('book_isbns.edit')->with('bookIsbn', $bookIsbn);
+        return view('book_isbns.edit')
+            ->with('bookIsbn', $bookIsbn)
+            ->with('books', $books)
+            ->with('publishers', $publishers);;
     }
 
     /**

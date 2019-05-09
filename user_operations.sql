@@ -38,19 +38,21 @@ CREATE PROCEDURE search_books(IN title_s varchar(45), IN author varchar(45), IN 
                               IN price_high int, IN no_of_copies_low int, IN publisher varchar(45),
                               IN isbn_s varchar(20), IN category varchar(45))
 BEGIN
-  SELECT *
-  from books
-         inner join book_isbns bi on books.id = bi.book_id
-         inner join publishers p on bi.publisher_id = p.id
-         inner join authors a on books.author_id = a.id
-  where title like concat("%", title_s, "%")
-    and a.name like concat("%", author, "%")
-    and price >= price_low
-    and price <= price_high
-    and no_of_copies >= no_of_copies_low
-    and p.name like concat("%", publisher, "%")
-    and bi.isbn like concat("%", isbn_s, "%")
-    and books.category like concat("%",category,"%");
+    SELECT books.id,books.title, books.price, books.category, books.threshold, books.no_of_copies
+    from books
+             inner join book_isbns bi on books.id = bi.book_id
+             inner join publishers p on bi.publisher_id = p.id
+             inner join authors_books au on books.id = au.book_id
+             inner join authors a on au.author_id = a.id
+
+    where title like concat("%", title_s, "%")
+      and a.name like concat("%", author, "%")
+      and price >= price_low
+      and price <= price_high
+      and no_of_copies >= no_of_copies_low
+      and p.name like concat("%", publisher, "%")
+      and bi.isbn like concat("%", isbn_s, "%")
+      and books.category like concat("%",category,"%");
 end;
 
 

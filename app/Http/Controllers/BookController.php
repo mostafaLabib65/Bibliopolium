@@ -40,15 +40,27 @@ class BookController extends AppBaseController
                 ['no_of_copies_low',  0],
                 'publisher',
                 'isbn',
-                'isbn'
+                'category'
             ],"''"
             );
         $books = \DB::select("CALL search_books(" .$params.")");
 
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
+
+        $authors = \DB::select("select name, id from authors");
+        $authors = static::modelsFromRawResults($authors, Author::class);
+        $authors = $authors->pluck("name", 'id');
+
         $books = static::modelsFromRawResults($books,$this->bookRepository->model());
 
         return view('books.index')
-            ->with('books', $books)->with('params',$request);
+            ->with('books', $books)
+            ->with('params',$request)
+            ->with('authors', $authors)
+            ->with('publishers', $publishers);
+        ;
     }
 
     /**
@@ -60,8 +72,15 @@ class BookController extends AppBaseController
     {
         $authors = \DB::select("select name, id from authors");
         $authors = static::modelsFromRawResults($authors, Author::class);
+        $authors = $authors->pluck("name", 'id');
+
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
         return view('books.create')
-            ->with('authors', $authors);
+            ->with('authors', $authors)
+            ->with('publishers', $publishers);
+
     }
 
     /**
@@ -93,8 +112,8 @@ class BookController extends AppBaseController
     {
         $this->authorize('view', Book::find($id));
 
-        $book = \DB::select("CALL get_book('". $id."')");
-        $book = static::modelFromRawResult($book[0],Book::class);
+        $book = \DB::select("CALL get_book('". $id."')")[0];
+        $book = static::modelFromRawResult($book,Book::class);
 
         $authors = \DB::select("CALL get_book_authors(".$id.")");
         $authors = static::modelsFromRawResults($authors, Author::class);
@@ -119,16 +138,22 @@ class BookController extends AppBaseController
      */
     public function edit($id)
     {
-        $book = \DB::select("CALL get_book('". $id."')");
-        $book = static::modelFromRawResult($book[0],Book::class);
+        $book = \DB::select("CALL get_book('". $id."')")[0];
+        $book = static::modelFromRawResult($book,Book::class);
 
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
         if (empty($book)) {
             Flash::error('Book not found');
 
             return redirect(route('books.index'));
         }
 
-        return view('books.edit')->with('book', $book);
+        return view('books.edit')
+            ->with('book', $book)
+            ->with('publishers', $publishers);
+        ;
     }
 
     /**
@@ -142,7 +167,7 @@ class BookController extends AppBaseController
     public function update($id, UpdateBookRequest $request)
     {
         $book = \DB::select("CALL get_book('". $id."')");
-        $book = static::modelFromRawResult($book[0],Book::class);
+        $book = static::modelFromRawResult($book,Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -170,7 +195,7 @@ class BookController extends AppBaseController
     public function destroy($id)
     {
         $book = \DB::select("CALL get_book('". $id."')");
-        $book = static::modelFromRawResult($book[0],Book::class);
+        $book = static::modelFromRawResult($book,Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
