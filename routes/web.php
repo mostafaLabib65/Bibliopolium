@@ -59,4 +59,12 @@ Route::group(["middleware" => "auth"], function () {
     Route::resource('roleCredentials', 'RoleCredentialController');
 
     Route::resource('statistics', 'StatisticController');
+
+    Route::resource('authorBooks', 'AuthorBookController', [
+        'only' => ['index', 'store', 'create']
+    ]);
+
+    Route::resource('authorBooks/{book_id}/authorBooks', 'AuthorBookController', [
+        'except' => ['index', 'store', 'create']
+    ]);
 });

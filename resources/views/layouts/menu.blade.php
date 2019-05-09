@@ -50,3 +50,7 @@
     <a href="{!! route('statistics.index') !!}"><i class="glyphicon glyphicon-stats"></i><span>Statistics</span></a>
 </li>
 
+<li class="{{ Request::is('authorBooks*') ? 'active' : '' }}">
+    <a href="{!! route('authorBooks.index') !!}"><i class="fa fa-edit"></i><span>Author Books</span></a>
+</li>
+

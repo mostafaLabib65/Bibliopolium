@@ -2,7 +2,6 @@
     <thead>
         <tr>
             <th>Title</th>
-        <th>Author</th>
         <th>Price</th>
         <th>Category</th>
         <th>Threshold</th>
@@ -14,7 +13,6 @@
     @foreach($books as $book)
         <tr>
             <td>{!! $book->title !!}</td>
-            <td>{!! $book->name !!}</td>
             <td>{!! $book->price !!}</td>
             <td>{!! $book->category !!}</td>
             <td>{!! $book->threshold !!}</td>

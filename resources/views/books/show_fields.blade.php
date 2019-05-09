@@ -12,8 +12,14 @@
 
 <!-- Author Id Field -->
 <div class="form-group">
-    {!! Form::label('author_id', 'Author Id:') !!}
-    <p>{!! $book->author_id !!}</p>
+    {!! Form::label('author_id', 'Authors :') !!}
+    <br>
+    @foreach($authors as $author)
+        <tr>
+            <td>{!! $author->name !!}</td>
+            <br>
+        </tr>
+    @endforeach
 </div>
 
 <!-- Price Field -->

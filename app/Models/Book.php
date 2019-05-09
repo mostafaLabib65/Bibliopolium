@@ -77,7 +77,6 @@ class Book extends Model
      */
     public static $rules = [
         'title' => 'required',
-        'author_id' => 'required',
         'price' => 'required',
         'category' => 'required',
         'threshold' => 'required',
