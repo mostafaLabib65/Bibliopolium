@@ -1,7 +1,8 @@
 <table class="table table-responsive" id="bookEditions-table">
     <thead>
-        <tr>
-            <th>Edition</th>
+    <tr>
+        <th>Title</th>
+        <th>Edition</th>
         <th>Publishing Year</th>
         <th>Publisher Name</th>
         <th>No Of Copies</th>
@@ -56,19 +57,19 @@
         }
 
     });
-    jQuery( document ).ready( function( $ ) {
+    jQuery(document).ready(function ($) {
 
-        $( '#add_to_cart' ).on( 'submit', function(e) {
+        $('#add_to_cart').on('submit', function (e) {
             e.preventDefault();
             console.log(e.target);
 
             $.ajax({
                 type: "POST",
                 url: '/items',
-                data:{book_id:this.dataset.bookid,edition:this.dataset.edition,quantity:this[1].value},
-                withCredentials:true,
-            }).done(function( msg ) {
-                alert( 'added to cart!' );
+                data: {book_id: this.dataset.bookid, edition: this.dataset.edition, quantity: this[1].value},
+                withCredentials: true,
+            }).done(function (msg) {
+                alert('added to cart!');
             });
 
         });
