@@ -60,11 +60,11 @@ class BookEdition extends Model
      * @var array
      */
     public static $rules = [
-//        'book_id' => 'required',
-//        'edition' => 'required',
-//        'publishing_year' => 'required',
-//        'publisher_id' => 'required',
-//        'no_of_copies' => 'required'
+        'book_id' => 'required',
+        'edition' => 'required',
+        'publishing_year' => 'required',
+        'publisher_id' => 'required',
+        'no_of_copies' => 'required'
     ];
 
 
