@@ -96,13 +96,9 @@ class User extends Authenticatable
      * @var array
      */
     public static $rules = [
-        'user_name' => 'required',
-        'email' => 'required',
-        'spent_money' => 'required',
+        'user_name' => 'required|unique:users,user_name',
+        'email' => 'required|unique:users,email',
         'password' => 'required',
-        'created_at' => 'required',
-        'updated_at' => 'required',
-        'role' => 'required'
     ];
 
 //    /**

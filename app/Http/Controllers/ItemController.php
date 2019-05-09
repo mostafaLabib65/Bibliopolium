@@ -29,7 +29,16 @@ class ItemController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $items = $this->itemRepository->all();
+        $id = \Auth::user()->id;
+
+        $items = \DB::select("select items.*, b.title as book_name, b.price as price, b.price * items.quantity as total_price from items 
+          inner join book_editions be on items.book_id = be.book_id and items.edition = be.edition
+          inner join books b on be.book_id = b.id 
+          inner join active_carts on items.cart_id = active_carts.id 
+          where active_carts.user_id = $id"
+            . ($request->has('cart_id') ? " and cart_id = $request->get('cart_id')" : ""));
+
+        $items = static::modelsFromRawResults($items, $this->itemRepository->model());
 
         return view('items.index')
             ->with('items', $items);
@@ -56,8 +65,8 @@ class ItemController extends AppBaseController
     {
         $input = $request->all();
 
-        $item = $this->itemRepository->create($input);
-
+        $id = \Auth::user()->id;
+        $item = \DB::insert("CALL add_item ( $id, $request->book_id, $request->edition, $request->quantity )");
         Flash::success('Item saved successfully.');
 
         return redirect(route('items.index'));
@@ -70,9 +79,10 @@ class ItemController extends AppBaseController
      *
      * @return Response
      */
-    public function show($id)
+    public function show($cart, $edition, $book)
     {
-        $item = $this->itemRepository->find($id);
+        $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
+
 
         if (empty($item)) {
             Flash::error('Item not found');
@@ -90,9 +100,9 @@ class ItemController extends AppBaseController
      *
      * @return Response
      */
-    public function edit($id)
+    public function edit($cart, $edition, $book)
     {
-        $item = $this->itemRepository->find($id);
+        $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
 
         if (empty($item)) {
             Flash::error('Item not found');
@@ -111,9 +121,9 @@ class ItemController extends AppBaseController
      *
      * @return Response
      */
-    public function update($id, UpdateItemRequest $request)
+    public function update($cart, $edition, $book, UpdateItemRequest $request)
     {
-        $item = $this->itemRepository->find($id);
+        $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
 
         if (empty($item)) {
             Flash::error('Item not found');
@@ -121,7 +131,7 @@ class ItemController extends AppBaseController
             return redirect(route('items.index'));
         }
 
-        $item = $this->itemRepository->update($request->all(), $id);
+//        $item = $this->itemRepository->update($request->all(), $id);
 
         Flash::success('Item updated successfully.');
 
@@ -137,9 +147,9 @@ class ItemController extends AppBaseController
      *
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($cart, $edition, $book)
     {
-        $item = $this->itemRepository->find($id);
+        $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
 
         if (empty($item)) {
             Flash::error('Item not found');
@@ -147,8 +157,10 @@ class ItemController extends AppBaseController
             return redirect(route('items.index'));
         }
 
-        $this->itemRepository->delete($id);
-
+//        $this->itemRepository->delete($id);
+        $user_id = \Auth::user()->id;
+        \DB::delete("CALL  remove_item( $user_id , $book, $edition) ");
+//        \DB::delete("DELETE FROM items where cart_id =$cart and edition = $edition and book_id = $book");
         Flash::success('Item deleted successfully.');
 
         return redirect(route('items.index'));

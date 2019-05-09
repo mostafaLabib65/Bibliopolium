@@ -27,6 +27,8 @@ Route::group(["middleware" => "auth"], function () {
     Route::resource('users', 'UserController');
 
     Route::resource('activeCarts', 'ActiveCartController');
+    Route::get('activeCarts/checkout/{id}', 'ActiveCartController@check')->name('activeCarts.check');
+    Route::post('activeCarts/checkout/{id}', 'ActiveCartController@checkout')->name('activeCarts.checkout');
 
     Route::resource('activeOrders', 'ActiveOrderController');
 
@@ -44,7 +46,13 @@ Route::group(["middleware" => "auth"], function () {
 
     Route::resource('historyOrders', 'HistoryOrderController');
 
-    Route::resource('items', 'ItemController');
+    Route::resource('items', 'ItemController', [
+        'only' => ['index', 'create','store']
+    ]);
+
+    Route::resource('cart/{cart_id}/edition/{edition}/items', 'ItemController', [
+        'except' => ['index', 'create','store']
+    ]);
 
     Route::resource('publishers', 'PublisherController');
 

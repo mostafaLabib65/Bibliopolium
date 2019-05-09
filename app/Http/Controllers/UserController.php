@@ -20,6 +20,7 @@ class UserController extends AppBaseController
         $this->userRepository = $userRepo;
     }
 
+
     /**
      * Display a listing of the User.
      *
@@ -29,7 +30,8 @@ class UserController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $users = $this->userRepository->all();
+        $users = \DB::select("Select * from users");
+        $users = static::modelsFromRawResults($users, $this->userRepository->model());
 
         return view('users.index')
             ->with('users', $users);
@@ -55,8 +57,19 @@ class UserController extends AppBaseController
     public function store(CreateUserRequest $request)
     {
         $input = $request->all();
-
-        $user = $this->userRepository->create($input);
+        $request['password'] = bcrypt($request['password']);
+        $params = static::extractParams($request,
+            [
+                'user_name',
+                'email',
+                'first_name',
+                'last_name',
+                'shipping_address',
+                'phone_number',
+                'password',
+                'role'
+            ]);
+        $user = \DB::select("CALL CREATE_USER(" . $params . ")");
 
         Flash::success('User saved successfully.');
 
@@ -72,8 +85,8 @@ class UserController extends AppBaseController
      */
     public function show($id)
     {
-        $user = $this->userRepository->find($id);
-
+        $user = \DB::select("Select * from users where id = $id")[0];
+        $user = static::modelFromRawResult($user, $this->userRepository->model());
         if (empty($user)) {
             Flash::error('User not found');
 
@@ -113,7 +126,11 @@ class UserController extends AppBaseController
      */
     public function update($id, UpdateUserRequest $request)
     {
-        $user = $this->userRepository->find($id);
+
+        $request['password'] = $request->has('password') && $request['password'] != null ? bcrypt($request['password']) : null;
+        $request['id'] =$id;
+
+        $user = \DB::select("Select * from users where id = $id");
 
         if (empty($user)) {
             Flash::error('User not found');
@@ -121,7 +138,20 @@ class UserController extends AppBaseController
             return redirect(route('users.index'));
         }
 
-        $user = $this->userRepository->update($request->all(), $id);
+        $params = static::extractParams($request,
+            [
+                'id',
+                'user_name',
+                'email',
+                'first_name',
+                'last_name',
+                'shipping_address',
+                'phone_number',
+                'password',
+                'role'
+            ]);
+        $user = \DB::select("CALL UPDATE_USER(" . $params . ")");
+
 
         Flash::success('User updated successfully.');
 
@@ -139,7 +169,7 @@ class UserController extends AppBaseController
      */
     public function destroy($id)
     {
-        $user = $this->userRepository->find($id);
+        $user = \DB::select("Select * from users where id = $id");
 
         if (empty($user)) {
             Flash::error('User not found');
@@ -147,7 +177,7 @@ class UserController extends AppBaseController
             return redirect(route('users.index'));
         }
 
-        $this->userRepository->delete($id);
+        \DB::delete("Delete from users where id  = $id");
 
         Flash::success('User deleted successfully.');
 

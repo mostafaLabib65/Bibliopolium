@@ -4,6 +4,13 @@
     {!! Form::email('email', null, ['class' => 'form-control']) !!}
 </div>
 
+
+<!-- First Name Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('user_name', 'Username:') !!}
+    {!! Form::text('user_name', null, ['class' => 'form-control']) !!}
+</div>
+
 <!-- First Name Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('first_name', 'First Name:') !!}
@@ -28,53 +35,14 @@
     {!! Form::text('phone_number', null, ['class' => 'form-control']) !!}
 </div>
 
-<!-- Spent Money Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('spent_money', 'Spent Money:') !!}
-    {!! Form::number('spent_money', null, ['class' => 'form-control']) !!}
-</div>
+
 
 <!-- Encrypted Password Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('encrypted_password', 'Encrypted Password:') !!}
-    {!! Form::text('encrypted_password', null, ['class' => 'form-control']) !!}
+    {!! Form::label('password', 'Password:') !!}
+    {!! Form::text('password', '', ['class' => 'form-control']) !!}
 </div>
-
-<!-- Reset Password Token Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('reset_password_token', 'Reset Password Token:') !!}
-    {!! Form::text('reset_password_token', null, ['class' => 'form-control']) !!}
 </div>
-
-<!-- Reset Password Sent At Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('reset_password_sent_at', 'Reset Password Sent At:') !!}
-    {!! Form::date('reset_password_sent_at', null, ['class' => 'form-control','id'=>'reset_password_sent_at']) !!}
-</div>
-
-@section('scripts')
-    <script type="text/javascript">
-        $('#reset_password_sent_at').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
-            useCurrent: false
-        })
-    </script>
-@endsection
-
-<!-- Remember Created At Field -->
-<div class="form-group col-sm-6">
-    {!! Form::label('remember_created_at', 'Remember Created At:') !!}
-    {!! Form::date('remember_created_at', null, ['class' => 'form-control','id'=>'remember_created_at']) !!}
-</div>
-
-@section('scripts')
-    <script type="text/javascript">
-        $('#remember_created_at').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
-            useCurrent: false
-        })
-    </script>
-@endsection
 
 <!-- Role Field -->
 <div class="form-group col-sm-6">

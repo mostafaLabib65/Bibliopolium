@@ -56,7 +56,7 @@ class Item extends Model
      * @var array
      */
     public static $rules = [
-        'cart_id' => 'required',
+//        'cart_id' => 'required',
         'book_id' => 'required',
         'quantity' => 'required',
         'edition' => 'required'

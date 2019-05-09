@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateActiveCartRequest;
 use App\Http\Requests\UpdateActiveCartRequest;
 use App\Models\ActiveCart;
+use App\Models\Item;
 use App\Repositories\ActiveCartRepository;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
@@ -31,9 +33,52 @@ class ActiveCartController extends AppBaseController
     public function index(Request $request)
     {
         $activeCarts = \DB::select("CAll index_carts");
-        $activeCarts = static::modelsFromRawResults($activeCarts,ActiveCart::class);
+        $activeCarts = static::modelsFromRawResults($activeCarts, ActiveCart::class);
         return view('active_carts.index')
             ->with('activeCarts', $activeCarts);
+    }
+
+    public function check($id, Request $request)
+    {
+        $activeCart = \DB::select(
+            "SELECT active_carts.*, SUM((books.price * items.quantity ))  as total_price, concat( u.last_name,', ' , u.first_name) as user_name 
+                    from active_carts
+                                inner join users u on active_carts.user_id = u.id
+                                left join items on active_carts.id = items.cart_id
+                                left join books on books.id = items.book_id
+                    where active_carts.id = 2
+                    GROUP BY active_carts.id
+"
+        )[0];
+        $activeCart = static::modelFromRawResult($activeCart, $this->activeCartRepository->model());
+
+        $items = \DB::select(
+            "SELECT items.*,books.title as book_name,books.price as price, books.price * items.quantity as total_price 
+                    from items inner join books on books.id = items.book_id 
+                    where cart_id = $id"
+        );
+
+        $items = static::modelsFromRawResults($items, Item::class);
+        return view('active_carts.checkout')
+            ->with('activeCart', $activeCart)
+            ->with('items', $items);
+    }
+
+    public function checkout(Request $request)
+    {
+        $id = $request->user()->id;
+        try {
+            \DB::select("CALL checkout_cart( $id , $request->credit_card )");
+        } catch (QueryException $e) {
+            Flash::error("Invalid Credit Card Number");
+            return redirect()->back();
+        }
+
+        Flash::success(
+            "Pleasure doing business with you!"
+        );
+        return redirect(route("bookEditions.index"));
+
     }
 
     /**
@@ -73,7 +118,27 @@ class ActiveCartController extends AppBaseController
      */
     public function show($id)
     {
-        $activeCart = $this->activeCartRepository->find($id);
+//        $activeCart = $this->activeCartRepository->find($id);
+
+        $activeCart = \DB::select(
+            "SELECT active_carts.*, SUM((books.price * items.quantity ))  as total_price, concat( u.last_name,', ' , u.first_name) as user_name 
+                    from active_carts
+                                inner join users u on active_carts.user_id = u.id
+                                left join items on active_carts.id = items.cart_id
+                                left join books on books.id = items.book_id
+                    where active_carts.id = $id
+                    GROUP BY active_carts.id
+"
+        )[0];
+        $activeCart = static::modelFromRawResult($activeCart, $this->activeCartRepository->model());
+
+        $items = \DB::select(
+            "SELECT items.*,books.title as book_name,books.price as price, books.price * items.quantity as total_price 
+                    from items inner join books on books.id = items.book_id 
+                    where cart_id = $id"
+        );
+
+        $items = static::modelsFromRawResults($items, Item::class);
 
         if (empty($activeCart)) {
             Flash::error('Active Cart not found');
@@ -81,7 +146,8 @@ class ActiveCartController extends AppBaseController
             return redirect(route('activeCarts.index'));
         }
 
-        return view('active_carts.show')->with('activeCart', $activeCart);
+        return view('active_carts.show')->with('activeCart', $activeCart)
+            ->withItems($items);
     }
 
     /**

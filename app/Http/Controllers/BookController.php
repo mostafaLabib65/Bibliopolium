@@ -29,10 +29,25 @@ class BookController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $books = $this->bookRepository->all();
+        $params = static::extractParams($request,
+            [
+                'title',
+                'author',
+                ['price_low' , 0],
+                ['price_high' , 50000],
+                ['no_of_copies_low',  0],
+                'publisher',
+                'isbn',
+                'isbn'
+            ],"''"
+            );
+        $books = \DB::select("CALL search_books(" .$params.")");
+
+        $books = static::modelsFromRawResults($books,$this->bookRepository->model());
+//        $books = $this->bookRepository->all();
 
         return view('books.index')
-            ->with('books', $books);
+            ->with('books', $books)->with('params',$request);
     }
 
     /**

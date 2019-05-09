@@ -9,8 +9,7 @@ use App\Repositories\BaseRepository;
  * Class ItemRepository
  * @package App\Repositories
  * @version May 7, 2019, 9:24 pm UTC
-*/
-
+ */
 class ItemRepository extends BaseRepository
 {
     /**
@@ -39,4 +38,12 @@ class ItemRepository extends BaseRepository
     {
         return Item::class;
     }
+
+    public function find_item($cart, $edition, $book, $columns = ['*'])
+    {
+        $item = \DB::select("SELECT * from items where cart_id = $cart and edition = $edition and book_id = $book limit 1")[0];
+        return $item;
+    }
+
+
 }

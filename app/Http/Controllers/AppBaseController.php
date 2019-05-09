@@ -59,4 +59,23 @@ class AppBaseController extends Controller
 
         return $object;
     }
+
+    public static function extractParams($request, $keys, $replace = "null")
+    {
+        $params = "";
+
+        foreach ($keys as $key) {
+            $rpl = $replace;
+            if (is_array($key)) {
+                $rpl = $key[1];
+                $key = $key[0];
+            }
+
+            $val = $request[$key] ?? $rpl;
+            $params = $params . ($val == $rpl ? $val : ("'" . $val . "'")) . ",";
+        }
+
+        $params = substr($params, 0, strlen($params) - 1);
+        return $params;
+    }
 }
