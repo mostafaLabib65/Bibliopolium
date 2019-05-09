@@ -1,7 +1,7 @@
 <!-- Auther Id Field -->
 <div class="form-group">
     {!! Form::label('auther_id', 'Auther Id:') !!}
-    <p>{!! $author->auther_id !!}</p>
+    <p>{!! $author->id !!}</p>
 </div>
 
 <!-- Name Field -->

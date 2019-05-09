@@ -12,13 +12,12 @@
         <tr>
             <td>{!! $activeOrder->book_id !!}</td>
             <td>{!! $activeOrder->quantity !!}</td>
-            <td>{!! $activeOrder->order_timestamp !!}</td>
+            <td>{!! $activeOrder->created_at !!}</td>
             <td>
                 {!! Form::open(['route' => ['activeOrders.destroy', $activeOrder->id], 'method' => 'delete']) !!}
                 <div class='btn-group'>
                     <a href="{!! route('activeOrders.show', [$activeOrder->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
-                    <a href="{!! route('activeOrders.edit', [$activeOrder->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
-                    {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
+                    <a href="{!! route('activeOrders.edit', [$activeOrder->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-erase"></i></a>
                 </div>
                 {!! Form::close() !!}
             </td>

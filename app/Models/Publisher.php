@@ -54,7 +54,6 @@ class Publisher extends Model
      * @var array
      */
     public static $rules = [
-        'id' => 'required',
         'name' => 'required',
         'address' => 'required',
         'phone_number' => 'required'

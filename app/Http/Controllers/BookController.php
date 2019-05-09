@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Models\Book;
 use App\Repositories\BookRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,10 +30,11 @@ class BookController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $books = $this->bookRepository->all();
+        $bookss = \DB::select("CALL index_books");
+        $bookss = static::modelsFromRawResults($bookss, Book::class);
 
         return view('books.index')
-            ->with('books', $books);
+            ->with('books', $bookss);
     }
 
     /**
@@ -56,7 +58,7 @@ class BookController extends AppBaseController
     {
         $input = $request->all();
 
-        $book = $this->bookRepository->create($input);
+        $book = \DB::select("Call add_new_book('".$input['title']."',".$input['author_id'].",".$input['price'].",'".$input['category']."',".$input['threshold'].",".$input['no_of_copies'].",".$input['publisher_id'].",".$input['publishing_year'].",".$input['edition'].",".$input['isbn'].")");
 
         Flash::success('Book saved successfully.');
 
@@ -72,7 +74,8 @@ class BookController extends AppBaseController
      */
     public function show($id)
     {
-        $book = $this->bookRepository->find($id);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -92,7 +95,8 @@ class BookController extends AppBaseController
      */
     public function edit($id)
     {
-        $book = $this->bookRepository->find($id);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -113,15 +117,17 @@ class BookController extends AppBaseController
      */
     public function update($id, UpdateBookRequest $request)
     {
-        $book = $this->bookRepository->find($id);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
 
             return redirect(route('books.index'));
         }
+        $input = $request->all();
 
-        $book = $this->bookRepository->update($request->all(), $id);
+        $book = \DB::select("CALL update_book(".$book->id.",'".$input['title']."',".$input['author_id'].",'".$input['price']."','".$input['category']."',".$input['threshold'].",".$input['no_of_copies'].")");
 
         Flash::success('Book updated successfully.');
 
@@ -139,7 +145,8 @@ class BookController extends AppBaseController
      */
     public function destroy($id)
     {
-        $book = $this->bookRepository->find($id);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -147,7 +154,7 @@ class BookController extends AppBaseController
             return redirect(route('books.index'));
         }
 
-        $this->bookRepository->delete($id);
+        \DB::select("CALL delete_book('". $id."')");
 
         Flash::success('Book deleted successfully.');
 

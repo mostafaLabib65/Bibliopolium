@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookIsbnRequest;
 use App\Http\Requests\UpdateBookIsbnRequest;
+use App\Models\BookIsbn;
 use App\Repositories\BookIsbnRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,7 +30,8 @@ class BookIsbnController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $bookIsbns = $this->bookIsbnRepository->all();
+        $bookIsbns = \DB::select("CALL index_book_isbns");
+        $bookIsbns = static::modelsFromRawResults($bookIsbns,BookIsbn::class);
 
         return view('book_isbns.index')
             ->with('bookIsbns', $bookIsbns);
@@ -56,7 +58,7 @@ class BookIsbnController extends AppBaseController
     {
         $input = $request->all();
 
-        $bookIsbn = $this->bookIsbnRepository->create($input);
+        $bookIsbn = \DB::select("CALL add_new_isbn(".$input['book_id'].",".$input['publisher_id'].",".$input['isbn'].")");
 
         Flash::success('Book Isbn saved successfully.');
 
@@ -70,9 +72,10 @@ class BookIsbnController extends AppBaseController
      *
      * @return Response
      */
-    public function show($id)
+    public function show($book_id, $publisher_id)
     {
-        $bookIsbn = $this->bookIsbnRepository->find($id);
+        $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
+        $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 
         if (empty($bookIsbn)) {
             Flash::error('Book Isbn not found');
@@ -90,9 +93,10 @@ class BookIsbnController extends AppBaseController
      *
      * @return Response
      */
-    public function edit($id)
+    public function edit($book_id, $publisher_id)
     {
-        $bookIsbn = $this->bookIsbnRepository->find($id);
+        $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
+        $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 
         if (empty($bookIsbn)) {
             Flash::error('Book Isbn not found');
@@ -111,17 +115,19 @@ class BookIsbnController extends AppBaseController
      *
      * @return Response
      */
-    public function update($id, UpdateBookIsbnRequest $request)
+    public function update($book_id, $publisher_id,UpdateBookIsbnRequest $request)
     {
-        $bookIsbn = $this->bookIsbnRepository->find($id);
+        $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
+        $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 
         if (empty($bookIsbn)) {
             Flash::error('Book Isbn not found');
 
             return redirect(route('bookIsbns.index'));
         }
+        $input = $request->all();
 
-        $bookIsbn = $this->bookIsbnRepository->update($request->all(), $id);
+        $bookIsbn = \DB::select("CALL update_isbn(".$book_id.", ".$publisher_id.", ".$input['isbn'].")");
 
         Flash::success('Book Isbn updated successfully.');
 
@@ -137,9 +143,10 @@ class BookIsbnController extends AppBaseController
      *
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($book_id, $publisher_id)
     {
-        $bookIsbn = $this->bookIsbnRepository->find($id);
+        $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
+        $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 
         if (empty($bookIsbn)) {
             Flash::error('Book Isbn not found');
@@ -147,7 +154,7 @@ class BookIsbnController extends AppBaseController
             return redirect(route('bookIsbns.index'));
         }
 
-        $this->bookIsbnRepository->delete($id);
+        \DB::select("CALL delete_isbn(".$book_id.", ".$publisher_id.")");
 
         Flash::success('Book Isbn deleted successfully.');
 

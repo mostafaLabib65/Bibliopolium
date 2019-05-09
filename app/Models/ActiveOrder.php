@@ -53,9 +53,8 @@ class ActiveOrder extends Model
      * @var array
      */
     public static $rules = [
-        'id' => 'required',
-        'book_id' => 'required',
-        'quantity' => 'required',
+//        'book_id' => 'required',
+//        'quantity' => 'required',
     ];
 
     /**

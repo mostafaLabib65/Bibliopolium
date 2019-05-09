@@ -1,9 +1,10 @@
 <table class="table table-responsive" id="bookEditions-table">
     <thead>
         <tr>
+            <th>Title</th>
             <th>Edition</th>
         <th>Publishing Year</th>
-        <th>Publisher Id</th>
+        <th>Publisher Name</th>
         <th>No Of Copies</th>
             <th colspan="3">Action</th>
         </tr>
@@ -11,9 +12,10 @@
     <tbody>
     @foreach($bookEditions as $bookEdition)
         <tr>
+            <td>{!! $bookEdition->title  !!}</td>
             <td>{!! $bookEdition->edition !!}</td>
             <td>{!! $bookEdition->publishing_year !!}</td>
-            <td>{!! $bookEdition->publisher_id !!}</td>
+            <td>{!! $bookEdition->name !!}</td>
             <td>{!! $bookEdition->no_of_copies !!}</td>
             <td>
                 {!! Form::open(['route' => ['bookEditions.destroy', $bookEdition->book_id,$bookEdition->edition], 'method' => 'delete']) !!}

@@ -13,7 +13,7 @@
                <div class="row">
                    {!! Form::model($book, ['route' => ['books.update', $book->id], 'method' => 'patch']) !!}
 
-                        @include('books.fields')
+                        @include('books.edit_fields')
 
                    {!! Form::close() !!}
                </div>

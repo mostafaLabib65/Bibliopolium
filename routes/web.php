@@ -33,14 +33,20 @@ Route::group(["middleware" => "auth"], function () {
     Route::resource('authors', 'AuthorController');
 
     Route::resource('bookEditions', 'BookEditionController', [
-        'only' => ['index', 'create']
+        'only' => ['index', 'store', 'create']
     ]);
 
     Route::resource('bookEditions/{book_id}/bookEditions', 'BookEditionController', [
-        'except' => ['index', 'create']
+        'except' => ['index', 'store', 'create']
     ]);
 
-    Route::resource('bookIsbns', 'BookIsbnController');
+    Route::resource('bookIsbns', 'BookIsbnController',[
+        'only' => ['index', 'store', 'create']
+    ]);
+
+    Route::resource('bookIsbns/{book_id}/bookIsbns', 'BookIsbnController',[
+        'except' => ['index', 'store', 'create']
+    ]);
 
     Route::resource('historyOrders', 'HistoryOrderController');
 
