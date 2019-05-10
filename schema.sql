@@ -433,6 +433,7 @@ begin
     select book_id;
 end;
 
+
 create procedure index_books()
 begin
     select books.id,books.title, books.price, books.category, books.threshold, books.no_of_copies from books;
@@ -489,6 +490,7 @@ begin
     insert into book_editions(book_id, edition, publisher_id, publishing_year, no_of_copies, created_at) values (book_id, edition, publisher_id,publishing_year, no_of_copies, now());
 end;
 
+drop procedure index_book_editions;
 create
     definer = root@localhost procedure index_book_editions(IN book_x VARCHAR(50))
 begin
@@ -730,6 +732,7 @@ BEGIN
     ON DUPLICATE key update sold_copies = NEW.quantity + sold_copies, updated_at =CURRENT_TIMESTAMP;
 end;
 
+drop procedure CREATE_USER;
 create
   definer = root@localhost procedure CREATE_USER(IN user_name_x varchar(100), IN email_x varchar(100),
                                                  IN first_name_x varchar(100), IN last_name_x varchar(100),
@@ -739,8 +742,8 @@ BEGIN
     DECLARE user_id bigint(20);
     DECLARE role_id int(11);
 
-    INSERT into users(user_name, email, first_name, last_name, shipping_address, phone_number, password)
-    VALUES (user_name_x, email_x, first_name_x, last_name_x, shipping_address_x, phone_number_x, passwd_x);
+    INSERT into users(user_name, email, first_name, last_name, shipping_address, phone_number, password, created_at)
+    VALUES (user_name_x, email_x, first_name_x, last_name_x, shipping_address_x, phone_number_x, passwd_x, NOW());
 
     SELECT LAST_INSERT_ID() into user_id;
     Select id from roles where roles.name = "customer" limit 1 into role_id;
@@ -1028,6 +1031,7 @@ BEGIN
     DELETE FROM items where cart_id = cart_id_x and book_id = book_id_x and edition = edition_x;
 end;
 
+
 create
     definer = root@localhost procedure search_books(IN title_s varchar(45), IN author varchar(45), IN price_low int,
                                                     IN price_high int, IN no_of_copies_low int, IN publisher varchar(45),
@@ -1049,6 +1053,8 @@ BEGIN
       and books.category like concat("%", category, "%")
     GROUP BY books.id;
 end;
+
+
 
 create definer = root@localhost procedure update_cart_count(IN cart_id_x int, IN increase int)
 BEGIN
