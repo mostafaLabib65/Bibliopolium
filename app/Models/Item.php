@@ -7,16 +7,34 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Item
+ *
  * @package App\Models
  * @version May 7, 2019, 9:24 pm UTC
- *
  * @property \App\Models\ActiveCart cart
  * @property \App\Models\BookEdition book
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property integer book_id
  * @property integer quantity
  * @property integer edition
+ * @property int $cart_id
+ * @property int $book_id
+ * @property int $edition
+ * @property int $quantity
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\BookEdition $book
+ * @property-read \App\Models\ActiveCart $cart
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item whereBookId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item whereCartId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item whereEdition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Item whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Item extends Model
 {

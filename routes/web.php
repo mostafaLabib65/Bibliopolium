@@ -21,6 +21,9 @@ Auth::routes();
 Route::group(["middleware" => "auth"], function () {
 
     Route::get('/home', 'HomeController@index');
+    Route::get('/report_top_books', 'StatisticController@report_top_books');
+    Route::get('/report_top_customers', 'StatisticController@report_top_customers');
+    Route::get('/report_top_sales', 'StatisticController@report_top_sales');
 
     Route::resource('books', 'BookController');
 

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>InfyOm Generator</title>
+    <title>Bibliopolium</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
@@ -43,7 +43,8 @@
 
             <!-- Logo -->
             <a href="#" class="logo">
-                <b>Book store</b>
+                <b>Bibliopolium</b>
+
             </a>
 
             <!-- Header Navbar -->
@@ -106,7 +107,7 @@
 
         <!-- Main Footer -->
         <footer class="main-footer" style="max-height: 100px;text-align: center">
-            <strong>Copyright © 2016 <a href="#">Company</a>.</strong> All rights reserved.
+            <strong>"Cogito ergo sum" Copyright © Bibliopolium 2019 <a href="#">Company</a>.</strong> All rights reserved.
         </footer>
 
     </div>
@@ -126,7 +127,7 @@
 
                 <!-- Branding Image -->
                 <a class="navbar-brand" href="{!! url('/') !!}">
-                    InfyOm Generator
+                    Bibliopolium
                 </a>
             </div>
 

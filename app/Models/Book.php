@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Book
+ *
  * @package App\Models
  * @version May 7, 2019, 8:58 pm UTC
- *
  * @property \App\Models\Author author
  * @property \Illuminate\Database\Eloquent\Collection activeOrders
  * @property \App\Models\BookEdition bookEdition
  * @property \App\Models\BookIsbn bookIsbn
  * @property \Illuminate\Database\Eloquent\Collection historyOrders
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property \App\Models\Statistic statistic
  * @property string title
  * @property integer author_id
@@ -23,6 +23,32 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string category
  * @property integer threshold
  * @property integer no_of_copies
+ * @property int $id
+ * @property string $title
+ * @property float $price
+ * @property string $category
+ * @property int $threshold
+ * @property int $no_of_copies
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ActiveOrder[] $activeOrders
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Author[] $authors
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\BookEdition[] $bookEdition
+ * @property-read \App\Models\BookIsbn $bookIsbn
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\HistoryOrder[] $historyOrders
+ * @property-read \App\Models\Statistic $statistic
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book whereCategory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book whereNoOfCopies($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book whereThreshold($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Book whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Book extends Model
 {

@@ -7,17 +7,35 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class ActiveCart
+ *
  * @package App\Models
  * @version May 7, 2019, 9:24 pm UTC
- *
  * @property \App\Models\User userName
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property \App\Models\Item item
  * @property string user_name
  * @property string timestamp
  * @property integer status
  * @property integer no_of_items
+ * @property int $id
+ * @property int $user_id
+ * @property int $no_of_items
+ * @property string $status
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Item[] $item
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart whereNoOfItems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ActiveCart whereUserId($value)
+ * @mixin \Eloquent
  */
 class ActiveCart extends Model
 {

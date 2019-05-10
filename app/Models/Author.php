@@ -7,14 +7,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Author
+ *
  * @package App\Models
  * @version May 7, 2019, 9:24 pm UTC
- *
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property \Illuminate\Database\Eloquent\Collection books
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property string name
+ * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Book[] $books
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Author newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Author newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Author query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Author whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Author whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Author whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Author whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Author extends Model
 {

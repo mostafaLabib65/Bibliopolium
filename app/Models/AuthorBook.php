@@ -7,17 +7,32 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class AuthorBook
+ *
  * @package App\Models
  * @version May 9, 2019, 6:14 pm UTC
- *
  * @property \App\Models\Author author
  * @property \App\Models\Book book
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property integer author_id
+ * @property int $author_id
+ * @property int $book_id
+ * @property-read \App\Models\Author $author
+ * @property-read \App\Models\Book $book
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AuthorBook newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AuthorBook newQuery()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AuthorBook onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AuthorBook query()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AuthorBook whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AuthorBook whereBookId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AuthorBook withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AuthorBook withoutTrashed()
+ * @mixin \Eloquent
  */
 class AuthorBook extends Model
 {

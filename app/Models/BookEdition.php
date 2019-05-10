@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class BookEdition
+ *
  * @package App\Models
  * @version May 7, 2019, 9:24 pm UTC
- *
  * @property \App\Models\Book book
  * @property \App\Models\Publisher publisher
  * @property \Illuminate\Database\Eloquent\Collection
@@ -18,6 +18,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string publishing_year
  * @property integer publisher_id
  * @property integer no_of_copies
+ * @property int $book_id
+ * @property int $edition
+ * @property int $publisher_id
+ * @property int|null $publishing_year
+ * @property int $no_of_copies
+ * @property string $created_at
+ * @property string|null $updated_at
+ * @property-read \App\Models\Book $book
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Item[] $items
+ * @property-read \App\Models\Publisher $publisher
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition whereBookId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition whereEdition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition whereNoOfCopies($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition wherePublisherId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition wherePublishingYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookEdition whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class BookEdition extends Model
 {

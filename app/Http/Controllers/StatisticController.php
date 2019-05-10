@@ -30,21 +30,61 @@ class StatisticController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $this->authorize('index',  Statistic::class);
+        $this->authorize('index', Statistic::class);
 
         $top_books = \DB::select("CALL top_selling_books");
-        $top_books = static::modelsFromRawResults($top_books,Statistic::class);
+        $top_books = static::modelsFromRawResults($top_books, Statistic::class);
 
         $top_customers = \DB::select("CALL top_customers");
-        $top_customers = static::modelsFromRawResults($top_customers,Statistic::class);
+        $top_customers = static::modelsFromRawResults($top_customers, Statistic::class);
 
         $total_sales = \DB::select("CALL total_sales");
-        $total_sales = static::modelsFromRawResults($total_sales,Statistic::class);
-
+        $total_sales = static::modelsFromRawResults($total_sales, Statistic::class);
+        dd($total_sales);
         return view('statistics.index')
             ->with('top_books', $top_books)
             ->with('top_customers', $top_customers)
             ->with('total_sales', $total_sales);
+    }
+
+    public function report_top_books()
+    {
+        $this->authorize('index', Statistic::class);
+
+        $top_books = \DB::select("CALL top_selling_books");
+        $top_books = static::modelsFromRawResults($top_books, Statistic::class);
+
+
+        $pdf = \PDF::loadView('statistics.reports.top_books', ['top_books' => $top_books]);
+
+        return $pdf->download('report.pdf');
+    }
+
+    public function report_top_customers()
+    {
+        $this->authorize('index', Statistic::class);
+
+
+        $top_customers = \DB::select("CALL top_customers");
+        $top_customers = static::modelsFromRawResults($top_customers, Statistic::class);;
+
+        $pdf = \PDF::loadView('statistics.reports.top_books', ['top_customers' => $top_customers]);
+
+        return $pdf->download('report.pdf');
+    }
+
+
+    public function report_top_sales()
+    {
+        $this->authorize('index', Statistic::class);
+
+
+        $total_sales = \DB::select("CALL total_sales");
+        $total_sales = static::modelsFromRawResults($total_sales, Statistic::class);
+
+        $pdf = \PDF::loadView('statistics.reports.top_books', ['total_sales' => $total_sales]);
+
+        return $pdf->download('report.pdf');
     }
 
     /**

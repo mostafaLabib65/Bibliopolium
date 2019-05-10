@@ -7,15 +7,31 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class BookIsbn
+ *
  * @package App\Models
  * @version May 7, 2019, 9:24 pm UTC
- *
  * @property \App\Models\Book book
  * @property \App\Models\Publisher publisher
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property integer publisher_id
  * @property integer isbn
+ * @property int $book_id
+ * @property int $publisher_id
+ * @property string $isbn
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Book $book
+ * @property-read \App\Models\Publisher $publisher
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookIsbn newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookIsbn newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookIsbn query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookIsbn whereBookId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookIsbn whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookIsbn whereIsbn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookIsbn wherePublisherId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\BookIsbn whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class BookIsbn extends Model
 {

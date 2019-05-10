@@ -7,15 +7,38 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class PurchaseHistory
+ *
  * @package App\Models
  * @version May 7, 2019, 9:24 pm UTC
- *
  * @property \App\Models\User userName
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
- * @property \Illuminate\Database\Eloquent\Collection 
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
+ * @property \Illuminate\Database\Eloquent\Collection
  * @property string timestamp
  * @property float total_price
+ * @property int $id
+ * @property int|null $user_id
+ * @property int $no_of_items
+ * @property float $total_price
+ * @property string $status
+ * @property \Illuminate\Support\Carbon $cart_created_at
+ * @property \Illuminate\Support\Carbon|null $cart_updated_at
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereCartCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereCartUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereNoOfItems($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereTotalPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PurchaseHistory whereUserId($value)
+ * @mixin \Eloquent
  */
 class PurchaseHistory extends Model
 {
