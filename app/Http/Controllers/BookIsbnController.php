@@ -90,10 +90,10 @@ class BookIsbnController extends AppBaseController
      */
     public function show($book_id, $publisher_id)
     {
-        $this->authorize('view', $this->bookIsbnRepository->find($book_id, $publisher_id));
 
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
+        $this->authorize('view', $bookIsbn);
 
         if (empty($bookIsbn)) {
             Flash::error('Book Isbn not found');
@@ -113,10 +113,10 @@ class BookIsbnController extends AppBaseController
      */
     public function edit($book_id, $publisher_id)
     {
-        $this->authorize('edit', $this->bookIsbnRepository->find($book_id, $publisher_id));
 
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
+        $this->authorize('update', $bookIsbn);
 
         $books = \DB::select("CALL index_books()");
         $books = static::modelsFromRawResults($books,Book::class);
@@ -147,10 +147,10 @@ class BookIsbnController extends AppBaseController
      */
     public function update($book_id, $publisher_id,UpdateBookIsbnRequest $request)
     {
-        $this->authorize('edit', $this->bookIsbnRepository->find($book_id, $publisher_id));
 
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
+        $this->authorize('update', $bookIsbn);
 
         if (empty($bookIsbn)) {
             Flash::error('Book Isbn not found');
@@ -177,10 +177,10 @@ class BookIsbnController extends AppBaseController
      */
     public function destroy($book_id, $publisher_id)
     {
-        $this->authorize('delete', $this->bookIsbnRepository->find($book_id, $publisher_id));
 
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
+        $this->authorize('delete', $bookIsbn);
 
         if (empty($bookIsbn)) {
             Flash::error('Book Isbn not found');

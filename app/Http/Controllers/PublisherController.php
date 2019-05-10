@@ -105,7 +105,7 @@ class PublisherController extends AppBaseController
      */
     public function edit($id)
     {
-        $this->authorize('edit', $this->publisherRepository->find($id));
+        $this->authorize('update', $this->publisherRepository->find($id));
 
         $publisher = \DB::select("CALL get_publisher('". $id."')");
         $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
@@ -129,7 +129,7 @@ class PublisherController extends AppBaseController
      */
     public function update($id, UpdatePublisherRequest $request)
     {
-        $this->authorize('edit', $this->publisherRepository->find($id));
+        $this->authorize('update', $this->publisherRepository->find($id));
 
         $publisher = \DB::select("CALL get_publisher('". $id."')");
         $publisher = static::modelFromRawResult($publisher[0],Publisher::class);

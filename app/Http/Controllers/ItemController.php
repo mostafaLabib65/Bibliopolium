@@ -88,9 +88,9 @@ class ItemController extends AppBaseController
      */
     public function show($cart, $edition, $book)
     {
-        $this->authorize('view', $this->itemRepository->$this->itemRepository->find_item($cart, $edition, $book));
 
         $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
+        $this->authorize('view', $item);
 
 
         if (empty($item)) {
@@ -111,9 +111,9 @@ class ItemController extends AppBaseController
      */
     public function edit($cart, $edition, $book)
     {
-        $this->authorize('edit', $this->itemRepository->$this->itemRepository->find_item($cart, $edition, $book));
 
         $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
+        $this->authorize('update', $item);
 
         if (empty($item)) {
             Flash::error('Item not found');
@@ -134,9 +134,9 @@ class ItemController extends AppBaseController
      */
     public function update($cart, $edition, $book, UpdateItemRequest $request)
     {
-        $this->authorize('edit', $this->itemRepository->$this->itemRepository->find_item($cart, $edition, $book));
 
         $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
+        $this->authorize('update', $item);
 
         if (empty($item)) {
             Flash::error('Item not found');
@@ -162,9 +162,9 @@ class ItemController extends AppBaseController
      */
     public function destroy($cart, $edition, $book)
     {
-        $this->authorize('delete', $this->itemRepository->$this->itemRepository->find_item($cart, $edition, $book));
 
         $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
+        $this->authorize('delete', $item);
 
         if (empty($item)) {
             Flash::error('Item not found');

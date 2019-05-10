@@ -90,11 +90,13 @@ class BookEditionController extends AppBaseController
      */
     public function show($book, $edition)
     {
-        $this->authorize('view', $this->bookEditionRepository->find($book, $edition));
 
         $bookEdition = \DB::select("CALL get_book_edition(".$book.",".$edition.")")[0];
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
+
+        $this->authorize('view', $bookEdition);
+
 
         if (empty($bookEdition)) {
             Flash::error('Book Edition not found');
@@ -114,11 +116,11 @@ class BookEditionController extends AppBaseController
      */
     public function edit($id, $edition)
     {
-        $this->authorize('edit', $this->bookEditionRepository->find($book, $edition));
 
         $bookEdition = \DB::select("CALL get_book_edition(".$id.",".$edition.")")[0];
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
+        $this->authorize('update', $bookEdition);
 
         $books = \DB::select("CALL index_books()");
         $books = static::modelsFromRawResults($books,Book::class);
@@ -150,11 +152,12 @@ class BookEditionController extends AppBaseController
      */
     public function update($id, $edition,UpdateBookEditionRequest $request)
     {
-        $this->authorize('edit', $this->bookEditionRepository->find($book, $edition));
 
         $bookEdition = \DB::select("CALL get_book_edition(".$id.",".$edition.")")[0];
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
+
+        $this->authorize('update', $bookEdition);
 
         if (empty($bookEdition)) {
             Flash::error('Book Edition not found');
@@ -182,11 +185,13 @@ class BookEditionController extends AppBaseController
      */
     public function destroy($id, $edition)
     {
-        $this->authorize('delete', $this->bookEditionRepository->find($book, $edition));
+      //  $this->authorize('delete', $this->bookEditionRepository->find($id, $edition));
 
         $bookEdition = \DB::select("CALL get_book_edition(".$id.",".$edition.")")[0];
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
+
+        $this->authorize('delete', $bookEdition);
 
         if (empty($bookEdition)) {
             Flash::error('Book Edition not found');

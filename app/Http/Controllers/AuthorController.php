@@ -103,7 +103,7 @@ class AuthorController extends AppBaseController
      */
     public function edit($id)
     {
-        $this->authorize('edit', $this->authorRepository->find($id));
+        $this->authorize('update', $this->authorRepository->find($id));
 
         $author = \DB::select("CALL get_author('". $id."')");
         $author = static::modelFromRawResult($author[0],Author::class);
@@ -127,7 +127,7 @@ class AuthorController extends AppBaseController
      */
     public function update($id, UpdateAuthorRequest $request)
     {
-        $this->authorize('edit', $this->authorRepository->find($id));
+        $this->authorize('update', $this->authorRepository->find($id));
 
         $author = \DB::select("CALL get_author('". $id."')");
         $author = static::modelFromRawResult($author[0],Author::class);

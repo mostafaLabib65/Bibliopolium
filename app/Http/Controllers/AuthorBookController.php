@@ -81,10 +81,10 @@ class AuthorBookController extends AppBaseController
      */
     public function show($book_id, $author_id)
     {
-        $this->authorize('view', $this->authorBookRepository->find($book_id, $author_id));
 
         $authorBook = \DB::select("CALL get_book_author(".$book_id.",".$author_id.")")[0];
         $authorBook = static::modelFromRawResult($authorBook,AuthorBook::class);
+        $this->authorize('view', $authorBook);
 
 
         if (empty($authorBook)) {
@@ -105,9 +105,9 @@ class AuthorBookController extends AppBaseController
      */
     public function edit($book_id, $author_id)
     {
-        $this->authorize('edit', $this->authorBookRepository->find($book_id, $author_id));
         $authorBook = \DB::select("CALL get_book_author(".$book_id.",".$author_id.")")[0];
         $authorBook = static::modelFromRawResult($authorBook,AuthorBook::class);
+        $this->authorize('update', $authorBook);
 
 
         if (empty($authorBook)) {
@@ -130,6 +130,7 @@ class AuthorBookController extends AppBaseController
     public function update($id, UpdateAuthorBookRequest $request)
     {
         $authorBook = $this->authorBookRepository->find($id);
+        $this->authorize('update', $authorBook);
 
         if (empty($authorBook)) {
             Flash::error('Author Book not found');
@@ -155,10 +156,10 @@ class AuthorBookController extends AppBaseController
      */
     public function destroy($book_id, $author_id)
     {
-        $this->authorize('delete', $this->authorBookRepository->find($book_id, $author_id));
 
         $authorBook = \DB::select("CALL get_book_author(".$book_id.",".$author_id.")")[0];
         $authorBook = static::modelFromRawResult($authorBook,AuthorBook::class);
+        $this->authorize('delete', $authorBook);
 
         if (empty($authorBook)) {
             Flash::error('Author Book not found');

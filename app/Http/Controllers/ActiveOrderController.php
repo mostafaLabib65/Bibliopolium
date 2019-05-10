@@ -109,7 +109,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function edit($id)
     {
-        $this->authorize('edit', $this->activeOrderRepository->find($id));
+        $this->authorize('update', $this->activeOrderRepository->find($id));
         $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
         $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
@@ -132,7 +132,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function update($id, UpdateActiveOrderRequest $request)
     {
-        $this->authorize('edit', $this->activeOrderRepository->find($id));
+        $this->authorize('update', $this->activeOrderRepository->find($id));
         $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
         $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 

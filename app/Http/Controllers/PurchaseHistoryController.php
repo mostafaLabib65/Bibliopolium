@@ -101,7 +101,7 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function edit($id)
     {
-        $this->authorize('edit', $this->purchaseHistoryRepository->find($id));
+        $this->authorize('update', $this->purchaseHistoryRepository->find($id));
 
         $purchaseHistory = $this->purchaseHistoryRepository->find($id);
 
@@ -124,7 +124,7 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function update($id, UpdatePurchaseHistoryRequest $request)
     {
-        $this->authorize('edit', $this->purchaseHistoryRepository->find($id));
+        $this->authorize('update', $this->purchaseHistoryRepository->find($id));
 
         $purchaseHistory = $this->purchaseHistoryRepository->find($id);
 
