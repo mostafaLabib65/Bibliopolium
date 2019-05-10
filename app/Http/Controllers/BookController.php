@@ -71,7 +71,9 @@ class BookController extends AppBaseController
      */
     public function create()
     {
+
         $this->authorize('create', Book::class);
+        $categories = array('Science'=>'Science', 'Art'=>'Art', 'Religion'=>'Religion', 'History'=>'History', 'Geography'=>'Geography');
 
         $authors = \DB::select("select name, id from authors");
         $authors = static::modelsFromRawResults($authors, Author::class);
@@ -82,7 +84,8 @@ class BookController extends AppBaseController
         $publishers = $publishers->pluck("name", 'id');
         return view('books.create')
             ->with('authors', $authors)
-            ->with('publishers', $publishers);
+            ->with('publishers', $publishers)
+            ->with('categories', $categories);
 
     }
 
@@ -151,6 +154,7 @@ class BookController extends AppBaseController
     public function edit($id)
     {
         $this->authorize('update', $this->bookRepository->find($id));
+        $categories = array('Science'=>'Science', 'Art'=>'Art', 'Religion'=>'Religion', 'History'=>'History', 'Geography'=>'Geography');
 
         $book = \DB::select("CALL get_book('". $id."')");
         $book = static::modelFromRawResult($book[0],Book::class);
@@ -165,7 +169,8 @@ class BookController extends AppBaseController
 
         return view('books.edit')
             ->with('book', $book)
-            ->with('publishers', $publishers);
+            ->with('publishers', $publishers)
+            ->with('categories', $categories);
     }
 
     /**
