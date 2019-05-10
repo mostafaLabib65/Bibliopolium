@@ -31,8 +31,13 @@ class ActiveOrderController extends AppBaseController
      */
     public function index(Request $request)
     {
+
+        $this->authorize('index', ActiveOrder::class);
+
         $activeOrders = \DB::select("CALL index_active_orders");
         $activeOrders = static::modelsFromRawResults($activeOrders,ActiveOrder::class);
+
+
 
         return view('active_orders.index')
             ->with('activeOrders', $activeOrders);
@@ -45,6 +50,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', ActiveOrder::class);
         $books = \DB::select("CALL index_books()");
         $books = static::modelsFromRawResults($books,Book::class);
         $books = $books->pluck("title",'id');
@@ -61,6 +67,8 @@ class ActiveOrderController extends AppBaseController
      */
     public function store(CreateActiveOrderRequest $request)
     {
+        $this->authorize('create', ActiveOrder::class);
+
         $input = $request->all();
 
         $activeOrder = \DB::select("CALL add_new_order(".$input['book_id'].", ".$input['quantity'].")");
@@ -79,6 +87,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function show($id)
     {
+        $this->authorize('view', ActiveOrder::find($id));
         $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
         $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
@@ -100,6 +109,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function edit($id)
     {
+        $this->authorize('edit', ActiveOrder::find($id));
         $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
         $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
@@ -122,6 +132,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function update($id, UpdateActiveOrderRequest $request)
     {
+        $this->authorize('edit', ActiveOrder::find($id));
         $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
         $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
