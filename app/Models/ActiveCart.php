@@ -76,6 +76,6 @@ class ActiveCart extends Model
      **/
     public function item()
     {
-        return $this->hasMany(\App\Models\Item::class);
+        return $this->hasMany(\App\Models\Item::class,'cart_id');
     }
 }

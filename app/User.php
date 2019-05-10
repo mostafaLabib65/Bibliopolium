@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Models\ActiveCart;
+use App\Models\Item;
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -124,5 +126,9 @@ class User extends Authenticatable
     public function purchaseHistory()
     {
         return $this->hasOne(\App\Models\PurchaseHistory::class);
+    }
+
+    public function items(){
+        return $this->hasManyThrough(Item::class,ActiveCart::class,'id','cart_id');
     }
 }

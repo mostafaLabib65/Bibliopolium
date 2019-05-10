@@ -16,7 +16,8 @@ abstract class BasePolicy
      */
 
 
-    public function index(User $user,Model $book){
+    public function index(User $user, $args = [])
+    {
 
         return $user->can("$this->model.browse");
     }
@@ -28,8 +29,9 @@ abstract class BasePolicy
      * @param  \App\Model $book
      * @return mixed
      */
-    public function view(User $user,Model $model)
+    public function view(User $user, $args = [])
     {
+
         return $user->can("$this->model.read");
     }
 
@@ -51,7 +53,7 @@ abstract class BasePolicy
      * @param  \App\Model $book
      * @return mixed
      */
-    public function update(User $user, Model $book)
+    public function update(User $user, $args = [])
     {
         return $user->can("$this->model.edit");
 
@@ -64,7 +66,7 @@ abstract class BasePolicy
      * @param  \App\Model $book
      * @return mixed
      */
-    public function delete(User $user, Model $book)
+    public function delete(User $user, $args = [])
     {
         return $user->can("$this->model.delete");
 

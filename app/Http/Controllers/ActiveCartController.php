@@ -46,7 +46,7 @@ class ActiveCartController extends AppBaseController
                                 inner join users u on active_carts.user_id = u.id
                                 left join items on active_carts.id = items.cart_id
                                 left join books on books.id = items.book_id
-                    where active_carts.id = 2
+                    where active_carts.id = $id
                     GROUP BY active_carts.id
 "
         )[0];
