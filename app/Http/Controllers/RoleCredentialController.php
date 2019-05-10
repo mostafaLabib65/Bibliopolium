@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateRoleCredentialRequest;
 use App\Http\Requests\UpdateRoleCredentialRequest;
+use App\Models\RoleCredential;
 use App\Repositories\RoleCredentialRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,6 +30,8 @@ class RoleCredentialController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', RoleCredential::class);
+
         $roleCredentials = $this->roleCredentialRepository->all();
 
         return view('role_credentials.index')
@@ -42,6 +45,8 @@ class RoleCredentialController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', RoleCredential::class);
+
         return view('role_credentials.create');
     }
 
@@ -54,6 +59,8 @@ class RoleCredentialController extends AppBaseController
      */
     public function store(CreateRoleCredentialRequest $request)
     {
+        $this->authorize('create', RoleCredential::class);
+
         $input = $request->all();
 
         $roleCredential = $this->roleCredentialRepository->create($input);
@@ -72,6 +79,8 @@ class RoleCredentialController extends AppBaseController
      */
     public function show($id)
     {
+        $this->authorize('view',  $this->roleCredentialRepository->find($id));
+
         $roleCredential = $this->roleCredentialRepository->find($id);
 
         if (empty($roleCredential)) {
@@ -92,6 +101,8 @@ class RoleCredentialController extends AppBaseController
      */
     public function edit($id)
     {
+        $this->authorize('edit',  $this->roleCredentialRepository->find($id));
+
         $roleCredential = $this->roleCredentialRepository->find($id);
 
         if (empty($roleCredential)) {
@@ -113,6 +124,8 @@ class RoleCredentialController extends AppBaseController
      */
     public function update($id, UpdateRoleCredentialRequest $request)
     {
+        $this->authorize('edit',  $this->roleCredentialRepository->find($id));
+
         $roleCredential = $this->roleCredentialRepository->find($id);
 
         if (empty($roleCredential)) {
@@ -139,6 +152,8 @@ class RoleCredentialController extends AppBaseController
      */
     public function destroy($id)
     {
+        $this->authorize('delete',  $this->roleCredentialRepository->find($id));
+
         $roleCredential = $this->roleCredentialRepository->find($id);
 
         if (empty($roleCredential)) {

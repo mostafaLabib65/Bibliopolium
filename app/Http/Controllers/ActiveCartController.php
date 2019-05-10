@@ -32,6 +32,8 @@ class ActiveCartController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', ActiveCart::class);
+
         $activeCarts = \DB::select("CAll index_carts");
         $activeCarts = static::modelsFromRawResults($activeCarts, ActiveCart::class);
         return view('active_carts.index')
@@ -93,6 +95,8 @@ class ActiveCartController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', ActiveCart::class);
+
         return view('active_carts.create');
     }
 
@@ -105,6 +109,8 @@ class ActiveCartController extends AppBaseController
      */
     public function store(CreateActiveCartRequest $request)
     {
+        $this->authorize('create', ActiveCart::class);
+
         $input = $request->all();
 
         $activeCart = $this->activeCartRepository->create($input);
@@ -124,6 +130,7 @@ class ActiveCartController extends AppBaseController
     public function show($id)
     {
 //        $activeCart = $this->activeCartRepository->find($id);
+        $this->authorize('create', $this->activeCartRepository->find($id));
 
         $activeCart = \DB::select(
             "SELECT active_carts.*, SUM((books.price * items.quantity ))  as total_price, concat( u.last_name,', ' , u.first_name) as user_name 
@@ -164,6 +171,8 @@ class ActiveCartController extends AppBaseController
      */
     public function edit($id)
     {
+        $this->authorize('edit', $this->activeCartRepository->find($id));
+
         $activeCart = $this->activeCartRepository->find($id);
 
         if (empty($activeCart)) {
@@ -185,6 +194,8 @@ class ActiveCartController extends AppBaseController
      */
     public function update($id, UpdateActiveCartRequest $request)
     {
+        $this->authorize('edit', $this->activeCartRepository->find($id));
+
         $activeCart = $this->activeCartRepository->find($id);
 
         if (empty($activeCart)) {
@@ -211,6 +222,8 @@ class ActiveCartController extends AppBaseController
      */
     public function destroy($id)
     {
+        $this->authorize('delete', $this->activeCartRepository->find($id));
+
         $activeCart = $this->activeCartRepository->find($id);
 
         if (empty($activeCart)) {

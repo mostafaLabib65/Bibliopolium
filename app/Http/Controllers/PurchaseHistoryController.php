@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePurchaseHistoryRequest;
 use App\Http\Requests\UpdatePurchaseHistoryRequest;
+use App\Models\PurchaseHistory;
 use App\Repositories\PurchaseHistoryRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,6 +30,8 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', PurchaseHistory::class);
+
         $purchaseHistories = $this->purchaseHistoryRepository->all();
 
         return view('purchase_histories.index')
@@ -42,6 +45,8 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', PurchaseHistory::class);
+
         return view('purchase_histories.create');
     }
 
@@ -54,6 +59,8 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function store(CreatePurchaseHistoryRequest $request)
     {
+        $this->authorize('create', PurchaseHistory::class);
+
         $input = $request->all();
 
         $purchaseHistory = $this->purchaseHistoryRepository->create($input);
@@ -72,6 +79,8 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function show($id)
     {
+        $this->authorize('view', $this->purchaseHistoryRepository->find($id));
+
         $purchaseHistory = $this->purchaseHistoryRepository->find($id);
 
         if (empty($purchaseHistory)) {
@@ -92,6 +101,8 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function edit($id)
     {
+        $this->authorize('update', $this->purchaseHistoryRepository->find($id));
+
         $purchaseHistory = $this->purchaseHistoryRepository->find($id);
 
         if (empty($purchaseHistory)) {
@@ -113,6 +124,8 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function update($id, UpdatePurchaseHistoryRequest $request)
     {
+        $this->authorize('update', $this->purchaseHistoryRepository->find($id));
+
         $purchaseHistory = $this->purchaseHistoryRepository->find($id);
 
         if (empty($purchaseHistory)) {
@@ -139,6 +152,8 @@ class PurchaseHistoryController extends AppBaseController
      */
     public function destroy($id)
     {
+        $this->authorize('delete', $this->purchaseHistoryRepository->find($id));
+
         $purchaseHistory = $this->purchaseHistoryRepository->find($id);
 
         if (empty($purchaseHistory)) {
