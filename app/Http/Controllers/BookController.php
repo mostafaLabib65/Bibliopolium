@@ -113,6 +113,7 @@ class BookController extends AppBaseController
      * @param int $id
      *
      * @return Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function show($id)
     {
