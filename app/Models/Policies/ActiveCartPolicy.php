@@ -3,7 +3,6 @@
 namespace App\Models\Policies;
 
 
-
 use App\User;
 
 class ActiveCartPolicy extends BasePolicy
@@ -13,7 +12,7 @@ class ActiveCartPolicy extends BasePolicy
     public function view(User $user, $args = [])
     {
 
-        if($user->hasPermissionTo('active_cart.read','admin')){
+        if ($user->hasPermissionTo('active_cart.read', 'admin')) {
             return true;
         }
         return $user->activeCarts->first()->id == $args->id;
@@ -21,11 +20,15 @@ class ActiveCartPolicy extends BasePolicy
 
     public function delete(User $user, $args = [])
     {
-        if($user->hasPermissionTo('active_cart.delete','admin')){
+        if ($user->hasPermissionTo('active_cart.delete', 'admin')) {
             return true;
         }
         return $user->activeCarts->first()->id == $args->id;
     }
 
+    public function checkout(User $user, $args = [])
+    {
+        return $args->user_id == $user->id;
 
+    }
 }

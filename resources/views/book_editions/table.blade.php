@@ -19,7 +19,7 @@
             <td>{!! $bookEdition->name !!}</td>
             <td>{!! $bookEdition->no_of_copies !!}</td>
             <td>
-                {!! Form::open(['route' => ['items.store'], 'method' => 'post','id'=>'add_to_cart' , 'data-bookid'=>$bookEdition->book_id, 'data-edition'=>$bookEdition->edition]) !!}
+                {!! Form::open(['route' => ['items.store'], 'method' => 'post','name'=>'add_to_cart' , 'data-bookid'=>$bookEdition->book_id, 'data-edition'=>$bookEdition->edition]) !!}
                 <div class='btn-group'>
                     {{--<div class="form-group col-sm-1">--}}
                     {!! Form::label('qty', 'Quantity') !!}
@@ -59,7 +59,7 @@
     });
     jQuery(document).ready(function ($) {
 
-        $('#add_to_cart').on('submit', function (e) {
+        $('[name=add_to_cart]').on('submit', function (e) {
             e.preventDefault();
             console.log(e.target);
 

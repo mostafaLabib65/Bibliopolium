@@ -4,11 +4,11 @@
 </li>
 @endif
 
-{{--@if(auth()->user()->hasPermissionTo('user.read','customer') || auth()->user()->hasPermissionTo('users.read','admin') )--}}
+@if(auth()->user()->hasPermissionTo('user.read','customer') || auth()->user()->hasPermissionTo('user.read','admin') )
 <li class="{{ Request::is('users*') ? 'active' : '' }}">
     <a href="{!! route('users.index') !!}"><i class="glyphicon glyphicon-user"></i><span>Users</span></a>
 </li>
-{{--@endif--}}
+@endif
 
 @if(auth()->user()->hasPermissionTo('active_cart.read','customer') || auth()->user()->hasPermissionTo('active_cart.read','admin') )
 
@@ -77,8 +77,8 @@
 </li>
 @endif
 
-{{--@if(auth()->user()->hasPermissionTo('users.read','customer') || auth()->user()->hasPermissionTo('users.read','admin') )--}}
-{{--<li class="{{ Request::is('authorBooks*') ? 'active' : '' }}">--}}
-    {{--<a href="{!! route('authorBooks.index') !!}"><i class="fa fa-edit"></i><span>Author Books</span></a>--}}
-{{--</li>--}}
-{{--@endif--}}
+@if(auth()->user()->hasPermissionTo('author_book.read','customer') || auth()->user()->hasPermissionTo('author_book.read','admin') )
+<li class="{{ Request::is('authorBooks*') ? 'active' : '' }}">
+    <a href="{!! route('authorBooks.index') !!}"><i class="fa fa-edit"></i><span>Author Books</span></a>
+</li>
+@endif

@@ -42,6 +42,7 @@ class ActiveCartController extends AppBaseController
 
     public function check($id, Request $request)
     {
+        $this->authorize('checkout', ActiveCart::find($id));
         $activeCart = \DB::select(
             "SELECT active_carts.*, SUM((books.price * items.quantity ))  as total_price, concat( u.last_name,', ' , u.first_name) as user_name 
                     from active_carts
@@ -68,9 +69,9 @@ class ActiveCartController extends AppBaseController
 
     public function checkout(Request $request)
     {
-        $id = $request->user()->id;
+        $user_id = $request->user()->id;
         try {
-            \DB::select("CALL checkout_cart( $id , $request->credit_card )");
+            \DB::select("CALL checkout_cart( $user_id , $request->credit_card )");
         } catch (QueryException $e) {
             $start = strpos($e->getMessage(), 'MSG') + 4;
             $lentgth = strpos($e->getMessage(), '(') - $start;
