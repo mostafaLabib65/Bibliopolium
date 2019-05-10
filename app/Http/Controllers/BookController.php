@@ -31,6 +31,8 @@ class BookController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', Book::class);
+
         $params = static::extractParams($request,
             [
                 'title',
@@ -70,6 +72,8 @@ class BookController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', Book::class);
+
         $authors = \DB::select("select name, id from authors");
         $authors = static::modelsFromRawResults($authors, Author::class);
         $authors = $authors->pluck("name", 'id');
@@ -92,6 +96,8 @@ class BookController extends AppBaseController
      */
     public function store(CreateBookRequest $request)
     {
+        $this->authorize('create', Book::class);
+
         $input = $request->all();
 
         $book = \DB::select("Call add_new_book('".$input['title']."',".$input['author_id'].",".$input['price'].",'".$input['category']."',".$input['threshold'].",".$input['no_of_copies'].",".$input['publisher_id'].",".$input['publishing_year'].",".$input['edition'].",".$input['isbn'].")");
@@ -110,7 +116,7 @@ class BookController extends AppBaseController
      */
     public function show($id)
     {
-        $this->authorize('view', Book::find($id));
+        $this->authorize('view', $this->bookRepository->find($id));
 
         $book = \DB::select("CALL get_book('". $id."')")[0];
         $book = static::modelFromRawResult($book,Book::class);
@@ -138,6 +144,8 @@ class BookController extends AppBaseController
      */
     public function edit($id)
     {
+        $this->authorize('edit', $this->bookRepository->find($id));
+
         $book = \DB::select("CALL get_book('". $id."')");
         $book = static::modelFromRawResult($book[0],Book::class);
 
@@ -160,6 +168,8 @@ class BookController extends AppBaseController
      */
     public function update($id, UpdateBookRequest $request)
     {
+        $this->authorize('edit', $this->bookRepository->find($id));
+
         $book = \DB::select("CALL get_book('". $id."')");
         $book = static::modelFromRawResult($book[0],Book::class);
 
@@ -188,6 +198,8 @@ class BookController extends AppBaseController
      */
     public function destroy($id)
     {
+        $this->authorize('delete', $this->bookRepository->find($id));
+
         $book = \DB::select("CALL get_book('". $id."')");
         $book = static::modelFromRawResult($book[0],Book::class);
 

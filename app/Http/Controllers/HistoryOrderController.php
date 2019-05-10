@@ -30,6 +30,8 @@ class HistoryOrderController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', HistoryOrder::class);
+
         $historyOrders = \DB::select("CALL index_history_orders");
         $historyOrders = static::modelsFromRawResults($historyOrders,HistoryOrder::class);
 
@@ -42,28 +44,29 @@ class HistoryOrderController extends AppBaseController
      *
      * @return Response
      */
-    public function create()
-    {
-        return view('history_orders.create');
-    }
-
-    /**
-     * Store a newly created HistoryOrder in storage.
-     *
-     * @param CreateHistoryOrderRequest $request
-     *
-     * @return Response
-     */
-    public function store(CreateHistoryOrderRequest $request)
-    {
-        $input = $request->all();
-
-        $historyOrder = $this->historyOrderRepository->create($input);
-
-        Flash::success('History Order saved successfully.');
-
-        return redirect(route('historyOrders.index'));
-    }
+//    public function create()
+//    {
+//        //not allowed to create !!
+//        return view('history_orders.create');
+//    }
+//
+//    /**
+//     * Store a newly created HistoryOrder in storage.
+//     *
+//     * @param CreateHistoryOrderRequest $request
+//     *
+//     * @return Response
+//     */
+//    public function store(CreateHistoryOrderRequest $request)
+//    {
+//        $input = $request->all();
+//
+//        $historyOrder = $this->historyOrderRepository->create($input);
+//
+//        Flash::success('History Order saved successfully.');
+//
+//        return redirect(route('historyOrders.index'));
+//    }
 
     /**
      * Display the specified HistoryOrder.
@@ -72,18 +75,18 @@ class HistoryOrderController extends AppBaseController
      *
      * @return Response
      */
-    public function show($id)
-    {
-        $historyOrder = $this->historyOrderRepository->find($id);
-
-        if (empty($historyOrder)) {
-            Flash::error('History Order not found');
-
-            return redirect(route('historyOrders.index'));
-        }
-
-        return view('history_orders.show')->with('historyOrder', $historyOrder);
-    }
+//    public function show($id)
+//    {
+//        $historyOrder = $this->historyOrderRepository->find($id);
+//
+//        if (empty($historyOrder)) {
+//            Flash::error('History Order not found');
+//
+//            return redirect(route('historyOrders.index'));
+//        }
+//
+//        return view('history_orders.show')->with('historyOrder', $historyOrder);
+//    }
 
     /**
      * Show the form for editing the specified HistoryOrder.
@@ -92,43 +95,43 @@ class HistoryOrderController extends AppBaseController
      *
      * @return Response
      */
-    public function edit($id)
-    {
-        $historyOrder = $this->historyOrderRepository->find($id);
-
-        if (empty($historyOrder)) {
-            Flash::error('History Order not found');
-
-            return redirect(route('historyOrders.index'));
-        }
-
-        return view('history_orders.edit')->with('historyOrder', $historyOrder);
-    }
-
-    /**
-     * Update the specified HistoryOrder in storage.
-     *
-     * @param int $id
-     * @param UpdateHistoryOrderRequest $request
-     *
-     * @return Response
-     */
-    public function update($id, UpdateHistoryOrderRequest $request)
-    {
-        $historyOrder = $this->historyOrderRepository->find($id);
-
-        if (empty($historyOrder)) {
-            Flash::error('History Order not found');
-
-            return redirect(route('historyOrders.index'));
-        }
-
-        $historyOrder = $this->historyOrderRepository->update($request->all(), $id);
-
-        Flash::success('History Order updated successfully.');
-
-        return redirect(route('historyOrders.index'));
-    }
+//    public function edit($id)
+//    {
+//        $historyOrder = $this->historyOrderRepository->find($id);
+//
+//        if (empty($historyOrder)) {
+//            Flash::error('History Order not found');
+//
+//            return redirect(route('historyOrders.index'));
+//        }
+//
+//        return view('history_orders.edit')->with('historyOrder', $historyOrder);
+//    }
+//
+//    /**
+//     * Update the specified HistoryOrder in storage.
+//     *
+//     * @param int $id
+//     * @param UpdateHistoryOrderRequest $request
+//     *
+//     * @return Response
+//     */
+//    public function update($id, UpdateHistoryOrderRequest $request)
+//    {
+//        $historyOrder = $this->historyOrderRepository->find($id);
+//
+//        if (empty($historyOrder)) {
+//            Flash::error('History Order not found');
+//
+//            return redirect(route('historyOrders.index'));
+//        }
+//
+//        $historyOrder = $this->historyOrderRepository->update($request->all(), $id);
+//
+//        Flash::success('History Order updated successfully.');
+//
+//        return redirect(route('historyOrders.index'));
+//    }
 
     /**
      * Remove the specified HistoryOrder from storage.
@@ -139,20 +142,20 @@ class HistoryOrderController extends AppBaseController
      *
      * @return Response
      */
-    public function destroy($id)
-    {
-        $historyOrder = $this->historyOrderRepository->find($id);
-
-        if (empty($historyOrder)) {
-            Flash::error('History Order not found');
-
-            return redirect(route('historyOrders.index'));
-        }
-
-        $this->historyOrderRepository->delete($id);
-
-        Flash::success('History Order deleted successfully.');
-
-        return redirect(route('historyOrders.index'));
-    }
+//    public function destroy($id)
+//    {
+//        $historyOrder = $this->historyOrderRepository->find($id);
+//
+//        if (empty($historyOrder)) {
+//            Flash::error('History Order not found');
+//
+//            return redirect(route('historyOrders.index'));
+//        }
+//
+//        $this->historyOrderRepository->delete($id);
+//
+//        Flash::success('History Order deleted successfully.');
+//
+//        return redirect(route('historyOrders.index'));
+//    }
 }

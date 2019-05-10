@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateItemRequest;
 use App\Http\Requests\UpdateItemRequest;
+use App\Models\Item;
 use App\Repositories\ItemRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -29,6 +30,8 @@ class ItemController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', Item::class);
+
         $id = \Auth::user()->id;
 
         $items = \DB::select("select items.*, b.title as book_name, b.price as price, b.price * items.quantity as total_price from items 
@@ -51,6 +54,8 @@ class ItemController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', Item::class);
+
         return view('items.create');
     }
 
@@ -63,6 +68,8 @@ class ItemController extends AppBaseController
      */
     public function store(CreateItemRequest $request)
     {
+        $this->authorize('create', Item::class);
+
         $input = $request->all();
 
         $id = \Auth::user()->id;
@@ -81,6 +88,8 @@ class ItemController extends AppBaseController
      */
     public function show($cart, $edition, $book)
     {
+        $this->authorize('view', $this->itemRepository->$this->itemRepository->find_item($cart, $edition, $book));
+
         $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
 
 
@@ -102,6 +111,8 @@ class ItemController extends AppBaseController
      */
     public function edit($cart, $edition, $book)
     {
+        $this->authorize('edit', $this->itemRepository->$this->itemRepository->find_item($cart, $edition, $book));
+
         $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
 
         if (empty($item)) {
@@ -123,6 +134,8 @@ class ItemController extends AppBaseController
      */
     public function update($cart, $edition, $book, UpdateItemRequest $request)
     {
+        $this->authorize('edit', $this->itemRepository->$this->itemRepository->find_item($cart, $edition, $book));
+
         $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
 
         if (empty($item)) {
@@ -149,6 +162,8 @@ class ItemController extends AppBaseController
      */
     public function destroy($cart, $edition, $book)
     {
+        $this->authorize('delete', $this->itemRepository->$this->itemRepository->find_item($cart, $edition, $book));
+
         $item = static::modelFromRawResult($this->itemRepository->find_item($cart, $edition, $book), $this->itemRepository->model());
 
         if (empty($item)) {

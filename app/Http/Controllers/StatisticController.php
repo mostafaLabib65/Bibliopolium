@@ -30,6 +30,8 @@ class StatisticController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index',  Statistic::class);
+
         $top_books = \DB::select("CALL top_selling_books");
         $top_books = static::modelsFromRawResults($top_books,Statistic::class);
 
@@ -50,117 +52,117 @@ class StatisticController extends AppBaseController
      *
      * @return Response
      */
-    public function create()
-    {
-        return view('statistics.create');
-    }
-
-    /**
-     * Store a newly created Statistic in storage.
-     *
-     * @param CreateStatisticRequest $request
-     *
-     * @return Response
-     */
-    public function store(CreateStatisticRequest $request)
-    {
-        $input = $request->all();
-
-        $statistic = $this->statisticRepository->create($input);
-
-        Flash::success('Statistic saved successfully.');
-
-        return redirect(route('statistics.index'));
-    }
-
-    /**
-     * Display the specified Statistic.
-     *
-     * @param int $id
-     *
-     * @return Response
-     */
-    public function show($id)
-    {
-        $statistic = $this->statisticRepository->find($id);
-
-        if (empty($statistic)) {
-            Flash::error('Statistic not found');
-
-            return redirect(route('statistics.index'));
-        }
-
-        return view('statistics.show')->with('statistic', $statistic);
-    }
-
-    /**
-     * Show the form for editing the specified Statistic.
-     *
-     * @param int $id
-     *
-     * @return Response
-     */
-    public function edit($id)
-    {
-        $statistic = $this->statisticRepository->find($id);
-
-        if (empty($statistic)) {
-            Flash::error('Statistic not found');
-
-            return redirect(route('statistics.index'));
-        }
-
-        return view('statistics.edit')->with('statistic', $statistic);
-    }
-
-    /**
-     * Update the specified Statistic in storage.
-     *
-     * @param int $id
-     * @param UpdateStatisticRequest $request
-     *
-     * @return Response
-     */
-    public function update($id, UpdateStatisticRequest $request)
-    {
-        $statistic = $this->statisticRepository->find($id);
-
-        if (empty($statistic)) {
-            Flash::error('Statistic not found');
-
-            return redirect(route('statistics.index'));
-        }
-
-        $statistic = $this->statisticRepository->update($request->all(), $id);
-
-        Flash::success('Statistic updated successfully.');
-
-        return redirect(route('statistics.index'));
-    }
-
-    /**
-     * Remove the specified Statistic from storage.
-     *
-     * @param int $id
-     *
-     * @throws \Exception
-     *
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        $statistic = $this->statisticRepository->find($id);
-
-        if (empty($statistic)) {
-            Flash::error('Statistic not found');
-
-            return redirect(route('statistics.index'));
-        }
-
-        $this->statisticRepository->delete($id);
-
-        Flash::success('Statistic deleted successfully.');
-
-        return redirect(route('statistics.index'));
-    }
+//    public function create()
+//    {
+//        return view('statistics.create');
+//    }
+//
+//    /**
+//     * Store a newly created Statistic in storage.
+//     *
+//     * @param CreateStatisticRequest $request
+//     *
+//     * @return Response
+//     */
+//    public function store(CreateStatisticRequest $request)
+//    {
+//        $input = $request->all();
+//
+//        $statistic = $this->statisticRepository->create($input);
+//
+//        Flash::success('Statistic saved successfully.');
+//
+//        return redirect(route('statistics.index'));
+//    }
+//
+//    /**
+//     * Display the specified Statistic.
+//     *
+//     * @param int $id
+//     *
+//     * @return Response
+//     */
+//    public function show($id)
+//    {
+//        $statistic = $this->statisticRepository->find($id);
+//
+//        if (empty($statistic)) {
+//            Flash::error('Statistic not found');
+//
+//            return redirect(route('statistics.index'));
+//        }
+//
+//        return view('statistics.show')->with('statistic', $statistic);
+//    }
+//
+//    /**
+//     * Show the form for editing the specified Statistic.
+//     *
+//     * @param int $id
+//     *
+//     * @return Response
+//     */
+//    public function edit($id)
+//    {
+//        $statistic = $this->statisticRepository->find($id);
+//
+//        if (empty($statistic)) {
+//            Flash::error('Statistic not found');
+//
+//            return redirect(route('statistics.index'));
+//        }
+//
+//        return view('statistics.edit')->with('statistic', $statistic);
+//    }
+//
+//    /**
+//     * Update the specified Statistic in storage.
+//     *
+//     * @param int $id
+//     * @param UpdateStatisticRequest $request
+//     *
+//     * @return Response
+//     */
+//    public function update($id, UpdateStatisticRequest $request)
+//    {
+//        $statistic = $this->statisticRepository->find($id);
+//
+//        if (empty($statistic)) {
+//            Flash::error('Statistic not found');
+//
+//            return redirect(route('statistics.index'));
+//        }
+//
+//        $statistic = $this->statisticRepository->update($request->all(), $id);
+//
+//        Flash::success('Statistic updated successfully.');
+//
+//        return redirect(route('statistics.index'));
+//    }
+//
+//    /**
+//     * Remove the specified Statistic from storage.
+//     *
+//     * @param int $id
+//     *
+//     * @throws \Exception
+//     *
+//     * @return Response
+//     */
+//    public function destroy($id)
+//    {
+//        $statistic = $this->statisticRepository->find($id);
+//
+//        if (empty($statistic)) {
+//            Flash::error('Statistic not found');
+//
+//            return redirect(route('statistics.index'));
+//        }
+//
+//        $this->statisticRepository->delete($id);
+//
+//        Flash::success('Statistic deleted successfully.');
+//
+//        return redirect(route('statistics.index'));
+//    }
 }

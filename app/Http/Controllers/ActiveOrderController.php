@@ -87,7 +87,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function show($id)
     {
-        $this->authorize('view', ActiveOrder::find($id));
+        $this->authorize('view', $this->activeOrderRepository->find($id));
         $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
         $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
@@ -109,7 +109,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function edit($id)
     {
-        $this->authorize('edit', ActiveOrder::find($id));
+        $this->authorize('edit', $this->activeOrderRepository->find($id));
         $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
         $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 
@@ -132,7 +132,7 @@ class ActiveOrderController extends AppBaseController
      */
     public function update($id, UpdateActiveOrderRequest $request)
     {
-        $this->authorize('edit', ActiveOrder::find($id));
+        $this->authorize('edit', $this->activeOrderRepository->find($id));
         $activeOrder = \DB::select("CALL get_active_order(".$id.")")[0];
         $activeOrder = static::modelFromRawResult($activeOrder,ActiveOrder::class);
 

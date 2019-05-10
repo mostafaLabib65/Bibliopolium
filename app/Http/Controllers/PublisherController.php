@@ -30,6 +30,8 @@ class PublisherController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', Publisher::class);
+
         $publishers = \DB::select("CALL index_publishers");
         $publishers = static::modelsFromRawResults($publishers,Publisher::class);
 
@@ -44,6 +46,8 @@ class PublisherController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', Publisher::class);
+
         return view('publishers.create');
     }
 
@@ -56,6 +60,8 @@ class PublisherController extends AppBaseController
      */
     public function store(CreatePublisherRequest $request)
     {
+        $this->authorize('create', Publisher::class);
+
         $input = $request->all();
 
 
@@ -76,6 +82,8 @@ class PublisherController extends AppBaseController
      */
     public function show($id)
     {
+        $this->authorize('view', $this->publisherRepository->find($id));
+
         $publisher = \DB::select("CALL get_publisher('". $id."')");
         $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
 
@@ -97,6 +105,8 @@ class PublisherController extends AppBaseController
      */
     public function edit($id)
     {
+        $this->authorize('edit', $this->publisherRepository->find($id));
+
         $publisher = \DB::select("CALL get_publisher('". $id."')");
         $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
 
@@ -119,6 +129,8 @@ class PublisherController extends AppBaseController
      */
     public function update($id, UpdatePublisherRequest $request)
     {
+        $this->authorize('edit', $this->publisherRepository->find($id));
+
         $publisher = \DB::select("CALL get_publisher('". $id."')");
         $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
 
@@ -149,6 +161,8 @@ class PublisherController extends AppBaseController
      */
     public function destroy($id)
     {
+        $this->authorize('delete', $this->publisherRepository->find($id));
+
         $publisher = \DB::select("CALL get_publisher('". $id."')");
         $publisher = static::modelFromRawResult($publisher[0],Publisher::class);
 

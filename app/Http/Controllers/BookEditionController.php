@@ -31,6 +31,8 @@ class BookEditionController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', BookEdition::class);
+
         $bookEditions =\DB::select("CALL index_book_editions");
         $bookEditions = static::modelsFromRawResults($bookEditions, BookEdition::class);
 
@@ -45,6 +47,8 @@ class BookEditionController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', BookEdition::class);
+
         $books = \DB::select("CALL index_books()");
         $books = static::modelsFromRawResults($books,Book::class);
         $books = $books->pluck("title",'id');
@@ -66,6 +70,8 @@ class BookEditionController extends AppBaseController
      */
     public function store(CreateBookEditionRequest $request)
     {
+        $this->authorize('create', BookEdition::class);
+
         $input = $request->all();
 
         $bookEdition = \DB::select("CALL add_new_edition(".$input['book_id'].",".$input['publisher_id'].",".$input['publishing_year'].",".$input['no_of_copies'].",".$input['edition'].")");
@@ -84,6 +90,8 @@ class BookEditionController extends AppBaseController
      */
     public function show($book, $edition)
     {
+        $this->authorize('view', $this->bookEditionRepository->find($book, $edition));
+
         $bookEdition = \DB::select("CALL get_book_edition(".$book.",".$edition.")")[0];
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
@@ -106,6 +114,8 @@ class BookEditionController extends AppBaseController
      */
     public function edit($id, $edition)
     {
+        $this->authorize('edit', $this->bookEditionRepository->find($book, $edition));
+
         $bookEdition = \DB::select("CALL get_book_edition(".$id.",".$edition.")")[0];
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
@@ -140,6 +150,8 @@ class BookEditionController extends AppBaseController
      */
     public function update($id, $edition,UpdateBookEditionRequest $request)
     {
+        $this->authorize('edit', $this->bookEditionRepository->find($book, $edition));
+
         $bookEdition = \DB::select("CALL get_book_edition(".$id.",".$edition.")")[0];
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);
@@ -170,6 +182,8 @@ class BookEditionController extends AppBaseController
      */
     public function destroy($id, $edition)
     {
+        $this->authorize('delete', $this->bookEditionRepository->find($book, $edition));
+
         $bookEdition = \DB::select("CALL get_book_edition(".$id.",".$edition.")")[0];
 
         $bookEdition = static::modelFromRawResult($bookEdition,BookEdition::class);

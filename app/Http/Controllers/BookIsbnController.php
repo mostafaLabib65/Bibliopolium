@@ -31,6 +31,8 @@ class BookIsbnController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', BookIsbn::class);
+
         $bookIsbns = \DB::select("CALL index_book_isbns");
         $bookIsbns = static::modelsFromRawResults($bookIsbns,BookIsbn::class);
 
@@ -45,6 +47,8 @@ class BookIsbnController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', BookIsbn::class);
+
         $books = \DB::select("CALL index_books()");
         $books = static::modelsFromRawResults($books,Book::class);
         $books = $books->pluck("title",'id');
@@ -66,6 +70,8 @@ class BookIsbnController extends AppBaseController
      */
     public function store(CreateBookIsbnRequest $request)
     {
+        $this->authorize('create', BookIsbn::class);
+
         $input = $request->all();
 
         $bookIsbn = \DB::select("CALL add_new_isbn(".$input['book_id'].",".$input['publisher_id'].",".$input['isbn'].")");
@@ -84,6 +90,8 @@ class BookIsbnController extends AppBaseController
      */
     public function show($book_id, $publisher_id)
     {
+        $this->authorize('view', $this->bookIsbnRepository->find($book_id, $publisher_id));
+
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 
@@ -105,6 +113,8 @@ class BookIsbnController extends AppBaseController
      */
     public function edit($book_id, $publisher_id)
     {
+        $this->authorize('edit', $this->bookIsbnRepository->find($book_id, $publisher_id));
+
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 
@@ -137,6 +147,8 @@ class BookIsbnController extends AppBaseController
      */
     public function update($book_id, $publisher_id,UpdateBookIsbnRequest $request)
     {
+        $this->authorize('edit', $this->bookIsbnRepository->find($book_id, $publisher_id));
+
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 
@@ -165,6 +177,8 @@ class BookIsbnController extends AppBaseController
      */
     public function destroy($book_id, $publisher_id)
     {
+        $this->authorize('delete', $this->bookIsbnRepository->find($book_id, $publisher_id));
+
         $bookIsbn = \DB::select("CALL get_isbn(".$book_id.",".$publisher_id.")")[0];
         $bookIsbn = static::modelFromRawResult($bookIsbn,BookIsbn::class);
 

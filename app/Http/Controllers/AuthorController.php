@@ -30,6 +30,8 @@ class AuthorController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $this->authorize('index', Author::class);
+
         $authors = \DB::select("CALL index_authors");
         $authors = static::modelsFromRawResults($authors,Author::class);
 
@@ -44,6 +46,8 @@ class AuthorController extends AppBaseController
      */
     public function create()
     {
+        $this->authorize('create', Author::class);
+
         return view('authors.create');
     }
 
@@ -56,6 +60,8 @@ class AuthorController extends AppBaseController
      */
     public function store(CreateAuthorRequest $request)
     {
+        $this->authorize('create', Author::class);
+
         $input = $request->all();
 
         $author = \DB::select("CALL add_new_author('".$input['name'] ."')");
@@ -74,6 +80,8 @@ class AuthorController extends AppBaseController
      */
     public function show($id)
     {
+        $this->authorize('view', $this->authorRepository->find($id));
+
         $author = \DB::select("CALL get_author('". $id."')");
         $author = static::modelFromRawResult($author[0],Author::class);
 
@@ -95,6 +103,8 @@ class AuthorController extends AppBaseController
      */
     public function edit($id)
     {
+        $this->authorize('edit', $this->authorRepository->find($id));
+
         $author = \DB::select("CALL get_author('". $id."')");
         $author = static::modelFromRawResult($author[0],Author::class);
 
@@ -117,6 +127,8 @@ class AuthorController extends AppBaseController
      */
     public function update($id, UpdateAuthorRequest $request)
     {
+        $this->authorize('edit', $this->authorRepository->find($id));
+
         $author = \DB::select("CALL get_author('". $id."')");
         $author = static::modelFromRawResult($author[0],Author::class);
 
@@ -145,6 +157,8 @@ class AuthorController extends AppBaseController
      */
     public function destroy($id)
     {
+        $this->authorize('delete', $this->authorRepository->find($id));
+
         $author = \DB::select("CALL get_author('". $id."')");
         $author = static::modelFromRawResult($author[0],Author::class);
 
