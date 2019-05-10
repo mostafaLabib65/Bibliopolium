@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateAuthorRequest;
 use App\Models\Author;
 use App\Repositories\AuthorRepository;
 use App\Http\Controllers\AppBaseController;
+use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
@@ -167,9 +168,14 @@ class AuthorController extends AppBaseController
 
             return redirect(route('authors.index'));
         }
+        try {
+            \DB::select("CALL delete_Author('" . $id . "')");
+        }catch (\Illuminate\Database\QueryException $e) {
+            if (\Str::contains($e->getMessage(), '42000'))
+                Flash::error("You can't delete that author");
+            return redirect()->back();
 
-        \DB::select("CALL delete_Author('". $id."')");
-
+        }
         Flash::success('Author deleted successfully.');
 
         return redirect(route('authors.index'));
