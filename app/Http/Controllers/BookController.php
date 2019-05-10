@@ -145,18 +145,22 @@ class BookController extends AppBaseController
      */
     public function edit($id)
     {
-        $this->authorize('edit', $this->bookRepository->find($id));
+        $this->authorize('update', $this->bookRepository->find($id));
 
         $book = \DB::select("CALL get_book('". $id."')");
         $book = static::modelFromRawResult($book[0],Book::class);
-
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
         if (empty($book)) {
             Flash::error('Book not found');
 
             return redirect(route('books.index'));
         }
 
-        return view('books.edit')->with('book', $book);
+        return view('books.edit')
+            ->with('book', $book)
+            ->with('publishers', $publishers);
     }
 
     /**
@@ -169,7 +173,7 @@ class BookController extends AppBaseController
      */
     public function update($id, UpdateBookRequest $request)
     {
-        $this->authorize('edit', $this->bookRepository->find($id));
+        $this->authorize('update', $this->bookRepository->find($id));
 
         $book = \DB::select("CALL get_book('". $id."')");
         $book = static::modelFromRawResult($book[0],Book::class);
@@ -181,7 +185,7 @@ class BookController extends AppBaseController
         }
         $input = $request->all();
 
-        $book = \DB::select("CALL update_book(".$book->id.",'".$input['title']."',".$input['price'].",'".$input['category']."',".$input['threshold'].",".$input['no_of_copies'].")");
+        $book = \DB::select("CALL update_book(".$book->id.",'".$input['title']."',".$input['price'].",'".$input['category']."',".$input['threshold'].")");
 
         Flash::success('Book updated successfully.');
 

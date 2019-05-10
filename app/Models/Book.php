@@ -78,7 +78,7 @@ class Book extends Model
         'price' => 'required',
         'category' => 'required',
         'threshold' => 'required',
-        'no_of_copies' => 'required',
+      //  'no_of_copies' => 'required',
     ];
 
     /**
