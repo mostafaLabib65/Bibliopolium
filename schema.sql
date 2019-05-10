@@ -489,12 +489,24 @@ begin
     insert into book_editions(book_id, edition, publisher_id, publishing_year, no_of_copies, created_at) values (book_id, edition, publisher_id,publishing_year, no_of_copies, now());
 end;
 
-
-create procedure index_book_editions()
+create
+    definer = root@localhost procedure index_book_editions(IN book_x VARCHAR(50))
 begin
-    select  book_editions.publisher_id, book_editions.book_id,books.title ,publishers.name, book_editions.edition, book_editions.publishing_year, book_editions.no_of_copies
-    from book_editions, publishers, books where book_editions.publisher_id = publishers.id and books.id = book_editions.book_id;
+    select book_editions.publisher_id,
+           book_editions.book_id,
+           books.title,
+           publishers.name,
+           book_editions.edition,
+           book_editions.publishing_year,
+           book_editions.no_of_copies
+    from book_editions,
+         publishers,
+         books
+    where book_editions.publisher_id = publishers.id
+      and books.id = book_editions.book_id
+      and books.title like concat("%",book_x,"%");
 end;
+
 
 create procedure get_book_edition(in book_id int, in edition int)
 begin
@@ -1021,12 +1033,12 @@ create
                                                     IN price_high int, IN no_of_copies_low int, IN publisher varchar(45),
                                                     IN isbn_s varchar(20), IN category varchar(45))
 BEGIN
-    SELECT books.*, GROUP_CONCAT(a.name SEPARATOR ", ") as authors
+    SELECT books.*,GROUP_CONCAT(a.name SEPARATOR ", ") as authors
     from books
-             inner join book_isbns bi on books.id = bi.book_id
-             inner join publishers p on bi.publisher_id = p.id
-             inner join authors_books ab on books.id = ab.book_id
-             inner join authors a on ab.author_id = a.id
+             left join book_isbns bi on books.id = bi.book_id
+             left join publishers p on bi.publisher_id = p.id
+             left join authors_books ab on books.id = ab.book_id
+             left join authors a on ab.author_id = a.id
     where title like concat("%", title_s, "%")
       and a.name like concat("%", author, "%")
       and price >= price_low
@@ -1037,7 +1049,6 @@ BEGIN
       and books.category like concat("%", category, "%")
     GROUP BY books.id;
 end;
-
 
 create definer = root@localhost procedure update_cart_count(IN cart_id_x int, IN increase int)
 BEGIN

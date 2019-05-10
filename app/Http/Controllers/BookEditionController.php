@@ -33,7 +33,9 @@ class BookEditionController extends AppBaseController
     {
         $this->authorize('index', BookEdition::class);
 
-        $bookEditions =\DB::select("CALL index_book_editions");
+        $book = $request['book'] ?? '';
+
+        $bookEditions =\DB::select("CALL index_book_editions ( '$book' )");
         $bookEditions = static::modelsFromRawResults($bookEditions, BookEdition::class);
 
         return view('book_editions.index')
