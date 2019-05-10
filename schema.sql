@@ -418,10 +418,10 @@ begin
     DECLARE book_id int;
 
     insert into books (title,  price, category, threshold, no_of_copies, created_at) values (title,  price, category, threshold, 0, NOW());
-    select max(id) from books into book_id;
-    insert into authors_books values (book_id, author_id);
+    select LAST_INSERT_ID() into book_id;
     insert into book_editions(book_id, edition, publisher_id, publishing_year, no_of_copies, created_at) values (book_id, edition, publisher_id,publishing_year , no_of_copies, NOW());
     insert into book_isbns(book_id, publisher_id, isbn,created_at) values (book_id, publisher_id, isbn, NOW());
+    select book_id;
 end;
 
 create procedure index_books()

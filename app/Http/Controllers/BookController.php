@@ -103,7 +103,7 @@ class BookController extends AppBaseController
         $authors = $request['authors'];
         $authors = array_slice($authors, 0);
 
-        $book  =$book[0]->book_id_x;
+        $book  =$book[0]->book_id;
         foreach ($authors as $author){
             \DB::select("CALL add_new_book_author( $book , $author )");
         }
