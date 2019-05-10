@@ -7,14 +7,14 @@ CREATE PROCEDURE UPDATE_USER(IN id_x bigint, IN user_name_x varchar(100), IN ema
                              IN passwd_x varchar(255), IN role_x tinyint)
 BEGIN
   Update users
-  set user_name = user_name_x ,
-      email = email_x ,
-      first_name = first_name_x ,
-      last_name = last_name_x ,
-      shipping_address = shipping_address_x ,
-      phone_number = phone_number_x ,
-      password = COALESCE(passwd_x, password) ,
-      role = role_x
+  set user_name        = user_name_x,
+      email            = email_x,
+      first_name       = first_name_x,
+      last_name        = last_name_x,
+      shipping_address = shipping_address_x,
+      phone_number     = phone_number_x,
+      password         = COALESCE(passwd_x, password),
+      role             = role_x
   where users.id = id_x;
 
   Select * from users where id = id_x;
@@ -24,7 +24,9 @@ end;
 
 CREATE PROCEDURE index_carts()
 BEGIN
-  SELECT active_carts.*, concat(last_name, ", ", first_name) as user_name, SUM(items.quantity * books.price) as total_price
+  SELECT active_carts.*,
+         concat(last_name, ", ", first_name) as user_name,
+         SUM(items.quantity * books.price)   as total_price
   from active_carts
          inner join users u on active_carts.user_id = u.id
          left join items on active_carts.id = items.cart_id
@@ -32,27 +34,35 @@ BEGIN
   GROUP BY active_carts.id;
 end;
 
-
+CREATE TRIGGER update_statistics
+  after insert
+  ON purchase_items_histories
+  FOR EACH ROW
+BEGIN
+  INSERT into statistics(book_id, sold_copies, updated_at)
+  VALUES (NEW.book_id, sold_copies + NEW.quantity, CURRENT_TIMESTAMP)
+  ON DUPLICATE key update sold_copies = quantity + sold_copies, updated_at =CURRENT_TIMESTAMP;
+end;
 
 CREATE PROCEDURE search_books(IN title_s varchar(45), IN author varchar(45), IN price_low int,
                               IN price_high int, IN no_of_copies_low int, IN publisher varchar(45),
                               IN isbn_s varchar(20), IN category varchar(45))
 BEGIN
-    SELECT books.id,books.title, books.price, books.category, books.threshold, books.no_of_copies
-    from books
-             inner join book_isbns bi on books.id = bi.book_id
-             inner join publishers p on bi.publisher_id = p.id
-             inner join authors_books au on books.id = au.book_id
-             inner join authors a on au.author_id = a.id
+  SELECT books.id, books.title, books.price, books.category, books.threshold, books.no_of_copies
+  from books
+         inner join book_isbns bi on books.id = bi.book_id
+         inner join publishers p on bi.publisher_id = p.id
+         inner join authors_books au on books.id = au.book_id
+         inner join authors a on au.author_id = a.id
 
-    where title like concat("%", title_s, "%")
-      and a.name like concat("%", author, "%")
-      and price >= price_low
-      and price <= price_high
-      and no_of_copies >= no_of_copies_low
-      and p.name like concat("%", publisher, "%")
-      and bi.isbn like concat("%", isbn_s, "%")
-      and books.category like concat("%",category,"%");
+  where title like concat("%", title_s, "%")
+    and a.name like concat("%", author, "%")
+    and price >= price_low
+    and price <= price_high
+    and no_of_copies >= no_of_copies_low
+    and p.name like concat("%", publisher, "%")
+    and bi.isbn like concat("%", isbn_s, "%")
+    and books.category like concat("%", category, "%");
 end;
 
 
@@ -144,7 +154,6 @@ end;
 
 
 
-
 CREATE PROCEDURE view_cart(username_x varchar(100))
 BEGIN
   SELECT * from items where cart_id in (SELECT cart_id from active_carts where user_id = username_x LIMIT 1);
@@ -212,18 +221,20 @@ BEGIN
   end if;
 
 
-
-  START TRANSACTION;
-  OPEN CUR;
-  items_list :
-    LOOP
-      FETCH CUR into cart_id_x,book_id_x,edition_x,quantity_x;
-      UPDATE book_editions SET no_of_copies = no_of_copies - quantity_x where book_id = book_id_x and edition = edition_x;
-    END LOOP items_list;
+  START TRANSACTION
+    ;
+    OPEN CUR;
+    items_list :
+      LOOP
+        FETCH CUR into cart_id_x,book_id_x,edition_x,quantity_x;
+        UPDATE book_editions
+        SET no_of_copies = no_of_copies - quantity_x
+        where book_id = book_id_x
+          and edition = edition_x;
+      END LOOP items_list;
   COMMIT;
 
 end;
-
 
 
 

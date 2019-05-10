@@ -56,7 +56,7 @@ class RoleAndPermissionSeeder extends Seeder
         $models = [
             'active_cart', 'active_order', 'author', 'book', 'book_edition', 'book_isbn',
             'history_order', 'item', 'publisher',
-            'purchase_history', 'role', 'statistic'
+            'purchase_history', 'role', 'statistic','user'
         ];
 
         $bread = ['browse', 'read', 'edit', 'add', 'delete'];
