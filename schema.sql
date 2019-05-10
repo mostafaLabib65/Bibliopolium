@@ -518,16 +518,17 @@ begin
     update books set no_of_copies = (no_of_copies + NEW.no_of_copies - OLD.no_of_copies)  where books.id = NEW.book_id;
 end;
 
-create trigger check_negative before update on book_editions for each row
+create trigger check_negative
+    before UPDATE on book_editions
+    for each row
 begin
     declare book_name varchar(45);
     select books.title from books where books.id = OLD.book_id into book_name;
     if NEW.no_of_copies < 0 then
-        set @message = concat('Book: ', book_name, ' edition: ', NEW.edition, ' available copies: ', OLD.no_of_copies);
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @message;
+        set @message = concat('MSG Book: ', book_name, ' edition: ', NEW.edition, ' available copies: ', OLD.no_of_copies);
+        SIGNAL SQLSTATE '42000' SET MESSAGE_TEXT = @message;
     end if;
 end;
-
 
 create trigger decrease_no_of_copies after delete on book_editions for each row
 begin
@@ -669,4 +670,264 @@ end;
 create procedure get_book_authors(in book_id int)
 begin
     select authors.name from authors, authors_books where authors_books.book_id = book_id and authors_books.author_id = authors.id;
+end;
+
+
+#---------------------------------------------------------------user_operations-----------------------------------------------------------------------------
+
+
+create definer = root@localhost trigger update_cart_count_after_deletion
+    after DELETE on items
+    for each row
+BEGIN
+    CALL update_cart_count(OLD.cart_id, -OLD.quantity);
+end;
+
+create definer = root@localhost trigger update_cart_count_after_insert
+    after INSERT on items
+    for each row
+BEGIN
+    CALL update_cart_count(NEW.cart_id, New.quantity);
+end;
+
+create definer = root@localhost trigger update_cart_count_after_update
+    after UPDATE on items
+    for each row
+BEGIN
+    IF NEW.quantity != OLD.quantity THEN
+        CALL update_cart_count(NEW.cart_id, -OLD.quantity + NEW.quantity);
+    end if;
+end;
+
+
+create definer = root@localhost trigger update_statistics
+    after INSERT on purchase_items_histories
+    for each row
+BEGIN
+    INSERT into statistics(book_id, sold_copies, updated_at)
+    VALUES (NEW.book_id, sold_copies + NEW.quantity, CURRENT_TIMESTAMP)
+    ON DUPLICATE key update sold_copies = NEW.quantity + sold_copies, updated_at =CURRENT_TIMESTAMP;
+end;
+
+create definer = root@localhost procedure CREATE_USER(IN user_name_x varchar(100), IN email_x varchar(100), IN first_name_x varchar(100), IN last_name_x varchar(100), IN shipping_address_x varchar(100), IN phone_number_x varchar(100), IN passwd_x varchar(255), IN role_x tinyint)
+BEGIN
+    INSERT into users(user_name, email, first_name, last_name, shipping_address, phone_number, password,
+                      role)
+    VALUES (user_name_x, email_x, first_name_x, last_name_x, shipping_address_x, phone_number_x, passwd_x, role_x);
+end;
+
+create definer = root@localhost procedure Login(IN email_x varchar(100), IN passwd_x varchar(100))
+BEGIN
+    DECLARE EXIT HANDLER FOR NOT FOUND
+        BEGIN
+
+        end;
+
+    SELECT rc.user_name, rc.decrypted_password
+    from users
+             inner join model_has_roles on users.id = model_has_roles.model_id
+             inner join roles on model_has_roles.role_id = roles.id
+             inner join role_credentials rc on roles.role_credential_id = rc.id
+    where email = email_x
+    ORDER BY roles.id
+    limit 1;
+
+end;
+
+create definer = root@localhost procedure UPDATE_USER(IN id_x bigint, IN user_name_x varchar(100), IN email_x varchar(100), IN first_name_x varchar(100), IN last_name_x varchar(100), IN shipping_address_x varchar(100), IN phone_number_x varchar(100), IN passwd_x varchar(255), IN role_x tinyint)
+BEGIN
+    Update users
+    set user_name = user_name_x ,
+        email = email_x ,
+        first_name = first_name_x ,
+        last_name = last_name_x ,
+        shipping_address = shipping_address_x ,
+        phone_number = phone_number_x ,
+        password = COALESCE(passwd_x, password) ,
+        role = role_x
+    where users.id = id_x;
+
+    Select * from users where id = id_x;
+end;
+
+create definer = root@localhost procedure add_item(IN user_id_x bigint, IN book_id_x int, IN edition_x int, IN quantity_x int)
+BEGIN
+
+    DECLARE user_name_x varchar(100);
+    DECLARE cart_id_x int;
+    DECLARE status_x varchar(100);
+    DECLARE cur CURSOR FOR SELECT user_id, id, status from active_carts where user_id = user_id_x LIMIT 1;
+
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND
+        BEGIN
+            INSERT into active_carts(user_id, status, no_of_items) VALUES (user_id_x, 'active', 0);
+
+            CLOSE cur;
+            OPEN cur;
+            FETCH cur into user_name_x,cart_id_x,status_x;
+
+        end;
+
+    OPEN cur;
+    FETCH cur into user_name_x,cart_id_x,status_x;
+
+
+    INSERT INTO items(cart_id, book_id, quantity, edition)
+    VALUES (cart_id_x, book_id_x, quantity_x, edition_x)
+    ON DUPLICATE KEY UPDATE quantity = quantity_x;
+
+end;
+
+create definer = root@localhost procedure checkout_cart(IN user_id_x bigint, IN credit_card_number varchar(32))
+BEGIN
+
+    DECLARE v_finished INTEGER DEFAULT 0;
+
+    DECLARE cart_id_x int(11);
+    DECLARE purchase_history_id_x int(11);
+    DECLARE book_id_x int(11);
+    DECLARE price_x int(11);
+    DECLARE edition_x int(11);
+    DECLARE quantity_x int(11);
+    DECLARE total_price_x int(11) DEFAULT 0;
+    DECLARE cur CURSOR for SELECT cart_id, book_id, edition, quantity, price
+                           from items
+                                    inner join active_carts ac on items.cart_id = ac.id
+                                    inner join books on items.book_id = books.id
+                           where ac.user_id = user_id_x;
+
+    DECLARE cur_2 CURSOR for SELECT id
+                             from purchase_histories
+                             where user_id = user_id_x
+                             ORDER BY created_at DESC
+                             limit 1;
+    -- declare NOT FOUND handler
+    DECLARE CONTINUE
+        HANDLER
+        FOR NOT FOUND
+        SET v_finished = 1;
+
+    IF not luhn_check(credit_card_number) THEN
+        signal SQLSTATE '45000'
+            SET MESSAGE_TEXT = "Invalid credit card number";
+    end if;
+
+
+    START TRANSACTION
+        ;
+        OPEN CUR;
+
+
+        INSERT into purchase_histories(user_id, no_of_items, total_price, status, cart_created_at, cart_updated_at)
+        SELECT user_id, no_of_items, concat(0), concat("confirmed"), created_at, updated_at
+        from active_carts
+        where user_id = user_id_x;
+
+        OPEN CUR_2;
+        FETCH cur_2 into purchase_history_id_x;
+
+
+        items_list :
+            LOOP
+                FETCH CUR into cart_id_x,book_id_x,edition_x,quantity_x,price_x;
+
+                IF v_finished = 1 THEN
+                    LEAVE items_list;
+                END IF;
+
+
+                UPDATE book_editions
+                SET no_of_copies = no_of_copies - quantity_x
+                where book_id = book_id_x
+                  and edition = edition_x;
+
+                SET total_price_x = total_price_x + quantity_x * price_x;
+
+                INSERT INTO purchase_items_histories(purchase_history_id, book_id, edition_id, quantity)
+                VALUES (purchase_history_id_x, book_id_x, edition_x, quantity_x);
+
+                DELETE FROM items where cart_id = cart_id_x and book_id = book_id_x and edition = edition_x;
+
+            END LOOP items_list;
+
+        UPDATE purchase_histories SET total_price = total_price_x where id = purchase_history_id_x;
+        UPDATE users set spent_money = spent_money + total_price_x where users.id = user_id_x;
+
+        DELETE from active_carts where user_id = user_id_x;
+    COMMIT;
+
+end;
+
+create definer = root@localhost function luhn(p_number varchar(31)) returns char
+begin
+    declare i, mysum, r, weight int;
+
+    set weight = 2;
+    set mysum = 0;
+    set i = length(p_number);
+
+    while i > 0 do
+    set r = substring(p_number, i, 1) * weight;
+    set mysum = mysum + if(r > 9, r - 9, r);
+    set i = i - 1;
+    set weight = 3 - weight;
+    end while;
+
+    return (10 - mysum % 10) % 10;
+end;
+
+create definer = root@localhost function luhn_check(p_number varchar(32)) returns tinyint(1)
+begin
+    declare luhn_number varchar(32);
+
+    set luhn_number = substring(p_number, 1, length(p_number) - 1);
+    set luhn_number = concat(luhn_number, luhn(luhn_number));
+
+    return luhn_number = p_number;
+end;
+
+create definer = root@localhost procedure remove_item(IN user_id bigint, IN book_id_x int, IN edition_x int)
+BEGIN
+
+    DECLARE user_name_x varchar(100);
+    DECLARE cart_id_x int;
+    DECLARE status_x varchar(20);
+    DECLARE cur CURSOR FOR SELECT user_id, id, status from active_carts where user_id = user_id LIMIT 1;
+
+    DECLARE EXIT HANDLER FOR NOT FOUND
+        BEGIN
+        END;
+
+    OPEN cur;
+
+    FETCH cur into user_name_x,cart_id_x,status_x;
+
+    DELETE FROM items where cart_id = cart_id_x and book_id = book_id_x and edition = edition_x;
+end;
+
+create definer = root@localhost procedure search_books(IN title_s varchar(45), IN author varchar(45), IN price_low int, IN price_high int, IN no_of_copies_low int, IN publisher varchar(45), IN isbn_s varchar(20), IN category varchar(45))
+BEGIN
+    SELECT *
+    from books
+             inner join book_isbns bi on books.id = bi.book_id
+             inner join publishers p on bi.publisher_id = p.id
+             inner join authors_books ab on books.id = ab.book_id
+             inner join authors a on ab.author_id = a.id
+    where title like concat("%", title_s, "%")
+      and a.name like concat("%", author, "%")
+      and price >= price_low
+      and price <= price_high
+      and no_of_copies >= no_of_copies_low
+      and p.name like concat("%", publisher, "%")
+      and bi.isbn like concat("%", isbn_s, "%")
+      and books.category like concat("%", category, "%");
+end;
+
+
+
+create definer = root@localhost procedure update_cart_count(IN cart_id_x int, IN increase int)
+BEGIN
+    UPDATE active_carts set no_of_items = no_of_items + increase where id = cart_id_x;
+
 end;
