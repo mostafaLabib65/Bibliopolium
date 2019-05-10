@@ -409,6 +409,15 @@ begin
     select * from authors;
 end;
 
+drop trigger check_no_authors;
+create trigger check_no_authors before delete on authors for each row
+    begin
+        declare no_of_authors int;
+        select count(authors_books.author_id) from authors_books where authors_books.author_id = OLD.id group by authors_books.author_id into no_of_authors;
+        if no_of_authors = 1 then
+            SIGNAL SQLSTATE '42000' SET MESSAGE_TEXT = "Can't delete author";
+        end if;
+    end;
 #-----------------------------------books table------------------------------------------------------
 CREATE procedure add_new_book( in title varchar(45), in author_id int,
                                in price float, in category varchar(20), in threshold int, in no_of_copies int,
@@ -708,6 +717,8 @@ BEGIN
     VALUES (NEW.book_id, sold_copies + NEW.quantity, CURRENT_TIMESTAMP)
     ON DUPLICATE key update sold_copies = NEW.quantity + sold_copies, updated_at =CURRENT_TIMESTAMP;
 end;
+
+
 
 create definer = root@localhost procedure CREATE_USER(IN user_name_x varchar(100), IN email_x varchar(100),
                                                       IN first_name_x varchar(100), IN last_name_x varchar(100),
