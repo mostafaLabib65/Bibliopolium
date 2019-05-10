@@ -718,12 +718,11 @@ BEGIN
     ON DUPLICATE key update sold_copies = NEW.quantity + sold_copies, updated_at =CURRENT_TIMESTAMP;
 end;
 
-
-
-create definer = root@localhost procedure CREATE_USER(IN user_name_x varchar(100), IN email_x varchar(100),
-                                                      IN first_name_x varchar(100), IN last_name_x varchar(100),
-                                                      IN shipping_address_x varchar(100), IN phone_number_x varchar(100),
-                                                      IN passwd_x varchar(255), IN role_x tinyint)
+create
+  definer = root@localhost procedure CREATE_USER(IN user_name_x varchar(100), IN email_x varchar(100),
+                                                 IN first_name_x varchar(100), IN last_name_x varchar(100),
+                                                 IN shipping_address_x varchar(100), IN phone_number_x varchar(100),
+                                                 IN passwd_x varchar(255), IN role_x tinyint)
 BEGIN
     DECLARE user_id bigint(20);
     DECLARE role_id int(11);
@@ -740,7 +739,9 @@ BEGIN
 end;
 
 
-create definer = root@localhost procedure Login(IN email_x varchar(100), IN passwd_x varchar(100))
+
+create
+    definer = root@localhost procedure Login(IN email_x varchar(100), IN passwd_x varchar(100))
 BEGIN
     DECLARE EXIT HANDLER FOR NOT FOUND
         BEGIN
@@ -757,6 +758,89 @@ BEGIN
     limit 1;
 
 end;
+
+
+create
+    definer = root@localhost procedure LOGOUT(IN user_id_x bigint(20))
+BEGIN
+    CALL log_active_cart(user_id_x, "discarded", FALSE);
+end;
+
+
+create procedure log_active_cart(IN user_id_x bigint(20), IN status_x varchar(100), IN is_purchased BOOLEAN)
+BEGIN
+    DECLARE v_finished INTEGER DEFAULT 0;
+
+    DECLARE cart_id_x int(11);
+    DECLARE purchase_history_id_x int(11);
+    DECLARE book_id_x int(11);
+    DECLARE price_x int(11);
+    DECLARE edition_x int(11);
+    DECLARE quantity_x int(11);
+    DECLARE total_price_x int(11) DEFAULT 0;
+    DECLARE cur CURSOR for SELECT cart_id, book_id, edition, quantity, price
+                           from items
+                                    inner join active_carts ac on items.cart_id = ac.id
+                                    inner join books on items.book_id = books.id
+                           where ac.user_id = user_id_x;
+
+    DECLARE cur_2 CURSOR for SELECT id
+                             from purchase_histories
+                             where user_id = user_id_x
+                             ORDER BY created_at DESC
+                             limit 1;
+    -- declare NOT FOUND handler
+    DECLARE CONTINUE
+        HANDLER
+        FOR NOT FOUND
+        SET v_finished = 1;
+    START TRANSACTION
+        ;
+        OPEN CUR;
+
+
+        INSERT into purchase_histories(user_id, no_of_items, total_price, status, cart_created_at, cart_updated_at)
+        SELECT user_id, no_of_items, concat(0), status_x, created_at, updated_at
+        from active_carts
+        where user_id = user_id_x;
+
+        OPEN CUR_2;
+        FETCH cur_2 into purchase_history_id_x;
+
+
+        items_list :
+            LOOP
+                FETCH CUR into cart_id_x,book_id_x,edition_x,quantity_x,price_x;
+
+                IF v_finished = 1 THEN
+                    LEAVE items_list;
+                END IF;
+
+                IF is_purchased THEN
+                    UPDATE book_editions
+                    SET no_of_copies = no_of_copies - quantity_x
+                    where book_id = book_id_x
+                      and edition = edition_x;
+                END IF;
+
+                SET total_price_x = total_price_x + quantity_x * price_x;
+
+                INSERT INTO purchase_items_histories(purchase_history_id, book_id, edition_id, quantity)
+                VALUES (purchase_history_id_x, book_id_x, edition_x, quantity_x);
+
+                DELETE FROM items where cart_id = cart_id_x and book_id = book_id_x and edition = edition_x;
+
+            END LOOP items_list;
+
+        UPDATE purchase_histories SET total_price = total_price_x where id = purchase_history_id_x;
+
+        IF is_purchased THEN
+            UPDATE users set spent_money = spent_money + total_price_x where users.id = user_id_x;
+        END IF;
+        DELETE from active_carts where user_id = user_id_x;
+    COMMIT;
+END;
+
 
 create definer = root@localhost procedure UPDATE_USER(IN id_x bigint, IN user_name_x varchar(100), IN email_x varchar(100),
                                                       IN first_name_x varchar(100), IN last_name_x varchar(100),

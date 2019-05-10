@@ -19,8 +19,9 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers{
+    use AuthenticatesUsers {
         login as authLogin;
+        logout as authLogout;
     }
 
     /**
@@ -42,16 +43,22 @@ class LoginController extends Controller
 
 
 
-//    protected function authenticated(Request $request, $user)
-//    {
-//        $value = $this->authLogin($request);
-//        return $value;
-////
-////        $credentials = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
-////        \DB::purge('mysql');
-////        \Config::set('database.connections.mysql.username', $credentials[0]->user_name);
-////        \Config::set('database.connections.mysql.password', $credentials[0]->decrypted_password);
-//    }
+    protected function authenticated(Request $request, $user)
+    {
+        $credentials = \DB::select("call Login('" . $request['email']. "','" .bcrypt($request['password'])."')");
+        \DB::purge('mysql');
+        \Config::set('database.connections.mysql.username', $credentials[0]->user_name);
+        \Config::set('database.connections.mysql.password', $credentials[0]->decrypted_password);
+    }
+
+
+
+    public function logout(Request $request)
+    {
+        $user = auth()->user()->id;
+        \DB::select("CALL LOGOUT( $user ) ");
+        return $this->authLogout($request);
+    }
 
 
 }

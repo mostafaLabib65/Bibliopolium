@@ -31,5 +31,13 @@ class AuthServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability) {
             return $user->hasRole('admin') ? true : null;
         });
+
+        if(\Auth::check()){
+            $email = auth()->user()->email;
+            $credentials = \DB::select("call Login('$email','')");
+            \DB::purge('mysql');
+            \Config::set('database.connections.mysql.username', $credentials[0]->user_name);
+            \Config::set('database.connections.mysql.password', $credentials[0]->decrypted_password);
+        }
     }
 }
