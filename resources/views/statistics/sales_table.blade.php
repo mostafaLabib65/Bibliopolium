@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th>Book ID</th>
+            <th>Book Title</th>
             <th>Total sales $</th>
         </tr>
     </thead>
@@ -9,6 +10,7 @@
     @foreach($total_sales as $total_sale)
         <tr>
             <td>{!! $total_sale->id !!}</td>
+            <td>{!! $total_sale->title !!}</td>
             <td>{!! $total_sale->total_price !!}</td>
         </tr>
     @endforeach

@@ -18,10 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Database\Eloquent\Collection
  * @property \Illuminate\Database\Eloquent\Collection
  * @property integer author_id
- * @property int $author_id
  * @property int $book_id
- * @property-read \App\Models\Author $author
- * @property-read \App\Models\Book $book
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AuthorBook newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\AuthorBook newQuery()
@@ -67,8 +64,8 @@ class AuthorBook extends Model
      * @var array
      */
     public static $rules = [
-        'book_id' => 'required',
-        'author_id' => 'required'
+        'author_id' => 'required',
+        'book_id' => 'required'
     ];
 
     /**
