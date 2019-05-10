@@ -1,18 +1,23 @@
 <table class="table table-responsive" id="books-table">
     <thead>
-        <tr>
-            <th>Title</th>
+    <tr>
+        <th>Title</th>
+        <th>Authors</th>
+        <th>Publisher</th>
         <th>Price</th>
         <th>Category</th>
         <th>Threshold</th>
         <th>No Of Copies</th>
-            <th colspan="3">Action</th>
-        </tr>
+        <th colspan="3">Action</th>
+    </tr>
     </thead>
     <tbody>
     @foreach($books as $book)
         <tr>
+
             <td>{!! $book->title !!}</td>
+            <td>{!! $book->authors ?? null   !!}</td>
+            <td>{!! $book->publisher ?? null   !!}</td>
             <td>{!! $book->price !!}</td>
             <td>{!! $book->category !!}</td>
             <td>{!! $book->threshold !!}</td>
@@ -22,7 +27,7 @@
                 <div class='btn-group'>
                     <a href="{!! route('books.show', [$book->id]) !!}" class='btn btn-default btn-xs'><i
                                 class="glyphicon glyphicon-eye-open"></i></a>
-                    <a href="{!! route('bookEditions.index', ['book'=>$book->id]) !!}" class='btn btn-default btn-xs'><i
+                    <a href="{!! route('bookEditions.index', ['book'=>$book->title]) !!}" class='btn btn-default btn-xs'><i
                                 class="glyphicon glyphicon-eye-open">See available editions</i></a>
                     <a href="{!! route('books.edit', [$book->id]) !!}" class='btn btn-default btn-xs'><i
                                 class="glyphicon glyphicon-edit"></i></a>

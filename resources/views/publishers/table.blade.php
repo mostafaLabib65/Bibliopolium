@@ -17,6 +17,7 @@
                 {!! Form::open(['route' => ['publishers.destroy', $publisher->id], 'method' => 'delete']) !!}
                 <div class='btn-group'>
                     <a href="{!! route('publishers.show', [$publisher->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open"></i></a>
+                    <a href="{!! route('books.index', ['publisher'=>$publisher->name]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-eye-open">See publisher's books</i></a>
                     <a href="{!! route('publishers.edit', [$publisher->id]) !!}" class='btn btn-default btn-xs'><i class="glyphicon glyphicon-edit"></i></a>
                     {!! Form::button('<i class="glyphicon glyphicon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
                 </div>
