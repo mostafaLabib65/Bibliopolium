@@ -906,9 +906,12 @@ BEGIN
     DELETE FROM items where cart_id = cart_id_x and book_id = book_id_x and edition = edition_x;
 end;
 
-create definer = root@localhost procedure search_books(IN title_s varchar(45), IN author varchar(45), IN price_low int, IN price_high int, IN no_of_copies_low int, IN publisher varchar(45), IN isbn_s varchar(20), IN category varchar(45))
+create
+    definer = root@localhost procedure search_books(IN title_s varchar(45), IN author varchar(45), IN price_low int,
+                                                    IN price_high int, IN no_of_copies_low int, IN publisher varchar(45),
+                                                    IN isbn_s varchar(20), IN category varchar(45))
 BEGIN
-    SELECT *
+    SELECT books.*, GROUP_CONCAT(a.name SEPARATOR ", ") as authors
     from books
              inner join book_isbns bi on books.id = bi.book_id
              inner join publishers p on bi.publisher_id = p.id
@@ -921,9 +924,9 @@ BEGIN
       and no_of_copies >= no_of_copies_low
       and p.name like concat("%", publisher, "%")
       and bi.isbn like concat("%", isbn_s, "%")
-      and books.category like concat("%", category, "%");
+      and books.category like concat("%", category, "%")
+    GROUP BY books.id;
 end;
-
 
 
 create definer = root@localhost procedure update_cart_count(IN cart_id_x int, IN increase int)
