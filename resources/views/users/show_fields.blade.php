@@ -40,29 +40,6 @@
     <p>{!! $user->spent_money !!}</p>
 </div>
 
-<!-- Encrypted Password Field -->
-<div class="form-group">
-    {!! Form::label('encrypted_password', 'Encrypted Password:') !!}
-    <p>{!! $user->encrypted_password !!}</p>
-</div>
-
-<!-- Reset Password Token Field -->
-<div class="form-group">
-    {!! Form::label('reset_password_token', 'Reset Password Token:') !!}
-    <p>{!! $user->reset_password_token !!}</p>
-</div>
-
-<!-- Reset Password Sent At Field -->
-<div class="form-group">
-    {!! Form::label('reset_password_sent_at', 'Reset Password Sent At:') !!}
-    <p>{!! $user->reset_password_sent_at !!}</p>
-</div>
-
-<!-- Remember Created At Field -->
-<div class="form-group">
-    {!! Form::label('remember_created_at', 'Remember Created At:') !!}
-    <p>{!! $user->remember_created_at !!}</p>
-</div>
 
 <!-- Created At Field -->
 <div class="form-group">

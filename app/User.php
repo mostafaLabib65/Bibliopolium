@@ -89,7 +89,7 @@ class User extends Authenticatable
         'reset_password_token' => 'string',
         'reset_password_sent_at' => 'datetime',
         'remember_created_at' => 'datetime',
-        'role' => 'boolean',
+        'role' => 'string',
         'email_verified_at'=>'datetime'
     ];
 

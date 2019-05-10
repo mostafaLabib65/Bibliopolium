@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Role;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\AppBaseController;
+use App\User;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
@@ -30,7 +32,7 @@ class UserController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $users = \DB::select("Select * from users");
+        $users = \DB::select("Select users.*,r.name as role from users left join model_has_roles on model_id=users.id left join roles r on model_has_roles.role_id = r.id where model_type='App\\\\User'");
         $users = static::modelsFromRawResults($users, $this->userRepository->model());
 
         return view('users.index')
@@ -69,6 +71,7 @@ class UserController extends AppBaseController
                 'password',
                 'role'
             ]);
+
         $user = \DB::select("CALL CREATE_USER(" . $params . ")");
 
         Flash::success('User saved successfully.');
@@ -85,15 +88,14 @@ class UserController extends AppBaseController
      */
     public function show($id)
     {
-        $user = \DB::select("Select * from users where id = $id")[0];
-        $user = static::modelFromRawResult($user, $this->userRepository->model());
+        $user = \DB::select("Select users.*,roles.name as role from users left join model_has_roles on model_id = users.id and model_type = 'App\\\\User' left join roles on model_has_roles.role_id  = roles.id where users.id = $id");
         if (empty($user)) {
             Flash::error('User not found');
 
             return redirect(route('users.index'));
         }
-
-        return view('users.show')->with('user', $user);
+        $user = static::modelFromRawResult($user[0], $this->userRepository->model());
+        return view('users.show')->with('user', $user)->withRole($user->role);
     }
 
     /**
@@ -105,15 +107,17 @@ class UserController extends AppBaseController
      */
     public function edit($id)
     {
-        $user = $this->userRepository->find($id);
+        $user = \DB::select("SELECT * from users where id = $id");
 
         if (empty($user)) {
             Flash::error('User not found');
 
             return redirect(route('users.index'));
         }
-
-        return view('users.edit')->with('user', $user);
+        $user = static::modelFromRawResult($user[0], User::class);
+        $roles = Role::all()->pluck('name', 'id');
+        $role = $user->roles->first()->id;
+        return view('users.edit')->with('user', $user)->withRoles($roles)->withRole($role);
     }
 
     /**
@@ -128,7 +132,7 @@ class UserController extends AppBaseController
     {
 
         $request['password'] = $request->has('password') && $request['password'] != null ? bcrypt($request['password']) : null;
-        $request['id'] =$id;
+        $request['id'] = $id;
 
         $user = \DB::select("Select * from users where id = $id");
 
@@ -150,8 +154,10 @@ class UserController extends AppBaseController
                 'password',
                 'role'
             ]);
-        $user = \DB::select("CALL UPDATE_USER(" . $params . ")");
+        \DB::select("CALL UPDATE_USER(" . $params . ")");
 
+        $user = static::modelFromRawResult($user[0], User::class);
+        $user->roles()->sync($request['role']);
 
         Flash::success('User updated successfully.');
 

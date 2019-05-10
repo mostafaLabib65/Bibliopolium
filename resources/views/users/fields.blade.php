@@ -36,7 +36,6 @@
 </div>
 
 
-
 <!-- Encrypted Password Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('password', 'Password:') !!}
@@ -47,10 +46,7 @@
 <!-- Role Field -->
 <div class="form-group col-sm-6">
     {!! Form::label('role', 'Role:') !!}
-    <label class="checkbox-inline">
-        {!! Form::hidden('role', 0) !!}
-        {!! Form::checkbox('role', '1', null) !!} 1
-    </label>
+    {!! Form::select('role',$roles,$role?? null,['class'=>'form-control']) !!}
 </div>
 
 <!-- Submit Field -->

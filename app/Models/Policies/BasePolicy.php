@@ -19,7 +19,8 @@ abstract class BasePolicy
     public function index(User $user, $args = [])
     {
 
-        return $user->can("$this->model.browse");
+        return $user->hasPermissionTo("$this->model.browse", "admin")
+            || $user->hasPermissionTo("$this->model.browse", "customer");
     }
 
     /**
@@ -32,8 +33,8 @@ abstract class BasePolicy
     public function view(User $user, $args = [])
     {
 
-        return $user->can("$this->model.read");
-    }
+        return $user->hasPermissionTo("$this->model.read", "admin")
+            || $user->hasPermissionTo("$this->model.read", "customer");    }
 
     /**
      * Determine whether the user can create books.
@@ -43,8 +44,8 @@ abstract class BasePolicy
      */
     public function create(User $user)
     {
-        return $user->can("$this->model.add");
-    }
+        return $user->hasPermissionTo("$this->model.add", "admin")
+            || $user->hasPermissionTo("$this->model.add", "customer");    }
 
     /**
      * Determine whether the user can update the book.
@@ -55,8 +56,8 @@ abstract class BasePolicy
      */
     public function update(User $user, $args = [])
     {
-        return $user->can("$this->model.edit");
-
+        return $user->hasPermissionTo("$this->model.edit", "admin")
+            || $user->hasPermissionTo("$this->model.edit", "customer");
     }
 
     /**
@@ -68,8 +69,8 @@ abstract class BasePolicy
      */
     public function delete(User $user, $args = [])
     {
-        return $user->can("$this->model.delete");
-
+        return $user->hasPermissionTo("$this->model.delete", "admin")
+            || $user->hasPermissionTo("$this->model.delete", "customer");
     }
 
     /**

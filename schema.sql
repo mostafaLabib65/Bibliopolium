@@ -709,12 +709,25 @@ BEGIN
     ON DUPLICATE key update sold_copies = NEW.quantity + sold_copies, updated_at =CURRENT_TIMESTAMP;
 end;
 
-create definer = root@localhost procedure CREATE_USER(IN user_name_x varchar(100), IN email_x varchar(100), IN first_name_x varchar(100), IN last_name_x varchar(100), IN shipping_address_x varchar(100), IN phone_number_x varchar(100), IN passwd_x varchar(255), IN role_x tinyint)
+create definer = root@localhost procedure CREATE_USER(IN user_name_x varchar(100), IN email_x varchar(100),
+                                                      IN first_name_x varchar(100), IN last_name_x varchar(100),
+                                                      IN shipping_address_x varchar(100), IN phone_number_x varchar(100),
+                                                      IN passwd_x varchar(255), IN role_x tinyint)
 BEGIN
-    INSERT into users(user_name, email, first_name, last_name, shipping_address, phone_number, password,
-                      role)
-    VALUES (user_name_x, email_x, first_name_x, last_name_x, shipping_address_x, phone_number_x, passwd_x, role_x);
+    DECLARE user_id bigint(20);
+    DECLARE role_id int(11);
+
+    INSERT into users(user_name, email, first_name, last_name, shipping_address, phone_number, password)
+    VALUES (user_name_x, email_x, first_name_x, last_name_x, shipping_address_x, phone_number_x, passwd_x);
+
+    SELECT LAST_INSERT_ID() into user_id;
+    Select id from roles where roles.name = "customer" limit 1 into role_id;
+
+    INSERT into model_has_roles VALUES (role_id,"App\\User",user_id);
+
+    SELECT * from users where id = user_id;
 end;
+
 
 create definer = root@localhost procedure Login(IN email_x varchar(100), IN passwd_x varchar(100))
 BEGIN
@@ -734,7 +747,10 @@ BEGIN
 
 end;
 
-create definer = root@localhost procedure UPDATE_USER(IN id_x bigint, IN user_name_x varchar(100), IN email_x varchar(100), IN first_name_x varchar(100), IN last_name_x varchar(100), IN shipping_address_x varchar(100), IN phone_number_x varchar(100), IN passwd_x varchar(255), IN role_x tinyint)
+create definer = root@localhost procedure UPDATE_USER(IN id_x bigint, IN user_name_x varchar(100), IN email_x varchar(100),
+                                                      IN first_name_x varchar(100), IN last_name_x varchar(100),
+                                                      IN shipping_address_x varchar(100), IN phone_number_x varchar(100),
+                                                      IN passwd_x varchar(255), IN role_x tinyint)
 BEGIN
     Update users
     set user_name = user_name_x ,
@@ -743,8 +759,7 @@ BEGIN
         last_name = last_name_x ,
         shipping_address = shipping_address_x ,
         phone_number = phone_number_x ,
-        password = COALESCE(passwd_x, password) ,
-        role = role_x
+        password = COALESCE(passwd_x, password)
     where users.id = id_x;
 
     Select * from users where id = id_x;

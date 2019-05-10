@@ -7,10 +7,6 @@
         <th>Shipping Address</th>
         <th>Phone Number</th>
         <th>Spent Money</th>
-        <th>Encrypted Password</th>
-        <th>Reset Password Token</th>
-        <th>Reset Password Sent At</th>
-        <th>Remember Created At</th>
         <th>Role</th>
             <th colspan="3">Action</th>
         </tr>
@@ -24,10 +20,6 @@
             <td>{!! $user->shipping_address !!}</td>
             <td>{!! $user->phone_number !!}</td>
             <td>{!! $user->spent_money !!}</td>
-            <td>{!! $user->encrypted_password !!}</td>
-            <td>{!! $user->reset_password_token !!}</td>
-            <td>{!! $user->reset_password_sent_at !!}</td>
-            <td>{!! $user->remember_created_at !!}</td>
             <td>{!! $user->role !!}</td>
             <td>
                 {!! Form::open(['route' => ['users.destroy', $user->id], 'method' => 'delete']) !!}
