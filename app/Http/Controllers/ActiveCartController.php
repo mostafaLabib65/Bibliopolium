@@ -70,7 +70,12 @@ class ActiveCartController extends AppBaseController
         try {
             \DB::select("CALL checkout_cart( $id , $request->credit_card )");
         } catch (QueryException $e) {
-            Flash::error("Invalid Credit Card Number");
+            $start = strpos($e->getMessage(), 'MSG') + 4;
+            $lentgth = strpos($e->getMessage(), '(') - $start;
+            if (\Str::contains($e->getMessage(), '45000'))
+                Flash::error("Invalid Credit Card Number");
+            else
+                Flash::error(substr($e->getMessage(), $start, $lentgth));
             return redirect()->back();
         }
 
