@@ -62,7 +62,6 @@ class BookController extends AppBaseController
             ->with('params',$request)
             ->with('authors', $authors)
             ->with('publishers', $publishers);
-        ;
     }
 
     /**
@@ -99,9 +98,15 @@ class BookController extends AppBaseController
         $this->authorize('create', Book::class);
 
         $input = $request->all();
+        $book = \DB::select("Call add_new_book('" . $input['title'] . "'," . $input['authors'][0] . "," . $input['price'] . ",'" . $input['category'] . "'," . $input['threshold'] . "," . $input['no_of_copies'] . "," . $input['publisher_id'] . "," . $input['publishing_year'] . "," . $input['edition'] . "," . $input['isbn'] . ")");
 
-        $book = \DB::select("Call add_new_book('".$input['title']."',".$input['author_id'].",".$input['price'].",'".$input['category']."',".$input['threshold'].",".$input['no_of_copies'].",".$input['publisher_id'].",".$input['publishing_year'].",".$input['edition'].",".$input['isbn'].")");
+        $authors = $request['authors'];
+        $authors = array_slice($authors, 0);
 
+        $book  =$book[0]->book_id_x;
+        foreach ($authors as $author){
+            \DB::select("CALL add_new_book_author( $book , $author )");
+        }
         Flash::success('Book saved successfully.');
 
         return redirect(route('books.index'));
