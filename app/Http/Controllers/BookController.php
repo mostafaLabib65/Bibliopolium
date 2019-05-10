@@ -37,31 +37,31 @@ class BookController extends AppBaseController
             [
                 'title',
                 'author',
-                ['price_low', 0],
-                ['price_high', 50000],
-                ['no_of_copies_low', 0],
+                ['price_low' , 0],
+                ['price_high' , 50000],
+                ['no_of_copies_low',  0],
                 'publisher',
                 'isbn',
                 'category'
-            ], "''"
-        );
-        $books = \DB::select("CALL search_books(" . $params . ")");
+            ],"''"
+            );
+        $books = \DB::select("CALL search_books(" .$params.")");
 
         $publishers = \DB::select("CALL index_publishers");
-        $publishers = static::modelsFromRawResults($publishers, Book::class);
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
         $publishers = $publishers->pluck("name", 'id');
 
         $authors = \DB::select("select name, id from authors");
         $authors = static::modelsFromRawResults($authors, Author::class);
         $authors = $authors->pluck("name", 'id');
 
-        $books = static::modelsFromRawResults($books, $this->bookRepository->model());
+        $books = static::modelsFromRawResults($books,$this->bookRepository->model());
 
         return view('books.index')
             ->with('books', $books)
-            ->with('params', $request)
+            ->with('params',$request)
             ->with('authors', $authors)
-            ->with('publishers', $publishers);;
+            ->with('publishers', $publishers);
     }
 
     /**
@@ -78,7 +78,7 @@ class BookController extends AppBaseController
         $authors = $authors->pluck("name", 'id');
 
         $publishers = \DB::select("CALL index_publishers");
-        $publishers = static::modelsFromRawResults($publishers, Book::class);
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
         $publishers = $publishers->pluck("name", 'id');
         return view('books.create')
             ->with('authors', $authors)
@@ -103,11 +103,10 @@ class BookController extends AppBaseController
         $authors = $request['authors'];
         $authors = array_slice($authors, 0);
 
-        $book  =$book[0]->book_id_x;
+        $book  =$book[0]->book_id;
         foreach ($authors as $author){
             \DB::select("CALL add_new_book_author( $book , $author )");
         }
-
         Flash::success('Book saved successfully.');
 
         return redirect(route('books.index'));
@@ -125,10 +124,10 @@ class BookController extends AppBaseController
     {
         $this->authorize('view', $this->bookRepository->find($id));
 
-        $book = \DB::select("CALL get_book('" . $id . "')")[0];
-        $book = static::modelFromRawResult($book, Book::class);
+        $book = \DB::select("CALL get_book('". $id."')")[0];
+        $book = static::modelFromRawResult($book,Book::class);
 
-        $authors = \DB::select("CALL get_book_authors(" . $id . ")");
+        $authors = \DB::select("CALL get_book_authors(".$id.")");
         $authors = static::modelsFromRawResults($authors, Author::class);
 
         if (empty($book)) {
@@ -151,18 +150,22 @@ class BookController extends AppBaseController
      */
     public function edit($id)
     {
-        $this->authorize('edit', $this->bookRepository->find($id));
+        $this->authorize('update', $this->bookRepository->find($id));
 
-        $book = \DB::select("CALL get_book('" . $id . "')");
-        $book = static::modelFromRawResult($book[0], Book::class);
-
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
+        $publishers = \DB::select("CALL index_publishers");
+        $publishers = static::modelsFromRawResults($publishers,Book::class);
+        $publishers = $publishers->pluck("name", 'id');
         if (empty($book)) {
             Flash::error('Book not found');
 
             return redirect(route('books.index'));
         }
 
-        return view('books.edit')->with('book', $book);
+        return view('books.edit')
+            ->with('book', $book)
+            ->with('publishers', $publishers);
     }
 
     /**
@@ -175,10 +178,10 @@ class BookController extends AppBaseController
      */
     public function update($id, UpdateBookRequest $request)
     {
-        $this->authorize('edit', $this->bookRepository->find($id));
+        $this->authorize('update', $this->bookRepository->find($id));
 
-        $book = \DB::select("CALL get_book('" . $id . "')");
-        $book = static::modelFromRawResult($book[0], Book::class);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -187,7 +190,7 @@ class BookController extends AppBaseController
         }
         $input = $request->all();
 
-        $book = \DB::select("CALL update_book(" . $book->id . ",'" . $input['title'] . "'," . $input['price'] . ",'" . $input['category'] . "'," . $input['threshold'] . "," . $input['no_of_copies'] . ")");
+        $book = \DB::select("CALL update_book(".$book->id.",'".$input['title']."',".$input['price'].",'".$input['category']."',".$input['threshold'].")");
 
         Flash::success('Book updated successfully.');
 
@@ -207,8 +210,8 @@ class BookController extends AppBaseController
     {
         $this->authorize('delete', $this->bookRepository->find($id));
 
-        $book = \DB::select("CALL get_book('" . $id . "')");
-        $book = static::modelFromRawResult($book[0], Book::class);
+        $book = \DB::select("CALL get_book('". $id."')");
+        $book = static::modelFromRawResult($book[0],Book::class);
 
         if (empty($book)) {
             Flash::error('Book not found');
@@ -216,7 +219,7 @@ class BookController extends AppBaseController
             return redirect(route('books.index'));
         }
 
-        \DB::select("CALL delete_book('" . $id . "')");
+        \DB::select("CALL delete_book('". $id."')");
 
         Flash::success('Book deleted successfully.');
 
